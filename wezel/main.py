@@ -34,13 +34,21 @@ def remove_components(labelsize, edgelabels, labels, img, sizelimit):
 
 
 if __name__ == '__main__':
-    userdir = input("give the folder of the train data:")
-    outputdir = input("give the output folder:")
-    kernel = np.array([[0, 0, 1, 0, 0],
-                       [0, 1, 1, 1, 0],
-                       [1, 1, 1, 1, 1],
-                       [0, 1, 1, 1, 0],
-                       [0, 0, 1, 0, 0]], np.uint8)
+    userdir = "/home/s2390590/Desktop/hwr/monkbrill/" # input("give the folder of the train data:")
+    outputdir = "/home/s2390590/Desktop/hwr/test/" # input("give the output folder:")
+    closingkernel = np.array([[0, 0, 0, 1, 0, 0, 0],
+                              [0, 1, 1, 1, 1, 1, 0],
+                              [1, 1, 1, 1, 1, 1, 1],
+                              [0, 1, 1, 1, 1, 1, 0],
+                              [0, 0, 0, 1, 0, 0, 0]], np.uint8)
+
+    openingkernel = np.array([[0, 0, 1, 0, 0],
+                              [0, 1, 1, 1, 0],
+                              [0, 1, 1, 1, 0],
+                              [1, 1, 1, 1, 1],
+                              [0, 1, 1, 1, 0],
+                              [0, 1, 1, 1, 0],
+                              [0, 0, 1, 0, 0]], np.uint8)
 
     # kernel = np.array([[0, 1, 0],
     #                    [1, 1, 1],
@@ -48,20 +56,20 @@ if __name__ == '__main__':
 
     for subdir, _, files in os.walk(userdir):
         fulloutpath = outputdir + os.path.basename(subdir) + "/"
+        if not os.path.exists(fulloutpath):
+            os.makedirs(fulloutpath)
         for file in files:
             filepath = os.path.join(subdir, file)
             srcimage = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
             blurred = cv2.GaussianBlur(srcimage, (5, 5), 0)
-            thresholded = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
-            closing = cv2.morphologyEx(thresholded, cv2.MORPH_CLOSE, kernel)
-            opening = cv2.morphologyEx(closing, cv2.MORPH_OPEN, kernel)
-            # closing = opening
+            thresholded = cv2.threshold(blurred, 200, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1] #  
+#            closing = cv2.morphologyEx(thresholded, cv2.MORPH_CLOSE, closingkernel)
+            opening = cv2.morphologyEx(thresholded, cv2.MORPH_OPEN, openingkernel)
             amount, labels = cv2.connectedComponents(opening, 4, cv2.CV_32S)
+            outputimg = opening
             if amount > 2:
                 labelsize = component_size(labels, amount)
                 edgelabels = detect_on_edge(labels, amount)
                 outputimg = remove_components(labelsize, edgelabels, labels, opening, 200)
-                if not os.path.exists(fulloutpath):
-                    os.makedirs(fulloutpath)
 
-                cv2.imwrite(fulloutpath + file, cv2.bitwise_not(outputimg))
+            cv2.imwrite(fulloutpath + file, cv2.bitwise_not(outputimg))
