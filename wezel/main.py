@@ -40,13 +40,14 @@ def crop_clean_symbols(inputdir, outputdir):
 
     for subdir, _, files in os.walk(inputdir):
         print("Start crop clean: " + os.path.basename(subdir))
-        fulloutpath = outputdir + os.path.basename(subdir) + "/"
+        fulloutpath = outputdir + "/" + os.path.basename(subdir) + "/"
         if not os.path.exists(fulloutpath):
             os.makedirs(fulloutpath)
         for file in files:
             filepath = os.path.join(subdir, file)
             srcimage = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
-            thresholded = cv2.threshold(srcimage, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
+            blurred = cv2.GaussianBlur(srcimage, (3, 3), 0)
+            thresholded = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
             amount, labels, stats, _ = cv2.connectedComponentsWithStats(thresholded, 4, cv2.CV_32S)
             largest_label = 1
             if amount > 2:
@@ -67,7 +68,8 @@ def crop_clean_symbols(inputdir, outputdir):
             max_width = max(max_width, width)
             max_height = max(max_height, height)
 
-            cropped_amount, cropped_labels, cropped_stats, _ = cv2.connectedComponentsWithStats(thresholded[up:down, left:right], 4, cv2.CV_32S)
+            cropped_thresholded = cv2.threshold(cropped_img, 200, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_BINARY)[1]
+            cropped_amount, cropped_labels, cropped_stats, _ = cv2.connectedComponentsWithStats(cropped_thresholded, 4, cv2.CV_32S)
             if cropped_amount > 2:
                 label_size = cropped_stats[:, cv2.CC_STAT_AREA]
                 edge_labels = detect_on_edge(cropped_labels, cropped_amount)
@@ -101,6 +103,7 @@ def rescale_images(imgdir, max_width, max_height):
 if __name__ == '__main__':
     userdir = input("give the folder of the train data:")
     outputdir = input("give the output folder:")
+
     if not os.path.exists(outputdir):
         os.makedirs(outputdir)
 
