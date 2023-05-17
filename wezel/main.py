@@ -41,8 +41,9 @@ def crop_clean_symbols(inputdir, outputdir):
     for subdir, _, files in os.walk(inputdir):
         print("Start crop clean: " + os.path.basename(subdir))
         fulloutpath = outputdir + "/" + os.path.basename(subdir) + "/"
-        if not os.path.exists(fulloutpath):
-            os.makedirs(fulloutpath)
+
+        assert_dir(fulloutpath)
+
         for file in files:
             filepath = os.path.join(subdir, file)
             srcimage = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
@@ -100,18 +101,61 @@ def rescale_images(imgdir, max_width, max_height):
         print("Finished rescaling: " + os.path.basename(subdir))
 
 
+def pre_processing(inputdir, outputdir):
+
+    kernel = np.ones((6, 6), np.uint8)
+
+    for file in os.listdir(inputdir):
+        filepath = os.path.join(inputdir, file)
+        if "binarized" in file:
+            print("Start cleaning: " + file)
+            srcimg = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
+            thresholded = cv2.threshold(srcimg, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
+            opening = cv2.morphologyEx(thresholded, cv2.MORPH_OPEN, kernel)
+            closing = cv2.morphologyEx(thresholded, cv2.MORPH_CLOSE, kernel)
+
+            opendifference = cv2.bitwise_xor(thresholded, opening)
+            closedifference = cv2.bitwise_xor(thresholded, closing)
+
+            outputimg = srcimg
+            for iy, ix in np.ndindex(outputimg.shape):
+                # if opendifference[iy][ix]:
+                #    outputimg[iy][ix] = 255
+
+                if closedifference[iy][ix]:
+                    outputimg[iy][ix] = 0
+
+            cv2.imwrite(outputdir + "/" + file[0:-14] + ".pgm", outputimg)
+            print("Finished cleaning: " + file)
+
+
+def assert_dir(assrtdir):
+    if not os.path.exists(assrtdir):
+        os.makedirs(assrtdir)
+
+
 if __name__ == '__main__':
-    userdir = input("give the folder of the train data:")
+    sourcesymboldir = input("give the folder of the train data:")
+    sourcescollsdir = input("give the folder of the scrolls data:")
     outputdir = input("give the output folder:")
 
-    if not os.path.exists(outputdir):
-        os.makedirs(outputdir)
+    assert_dir(outputdir)
+
+    symbolsdir = outputdir + "/symbols/"
+    assert_dir(symbolsdir)
+
+    scrollsdir = outputdir + "/scrolls/"
+    assert_dir(scrollsdir)
 
     print("Starting cropping and cleaning process.")
-    maxWidth, maxHeight = crop_clean_symbols(userdir, outputdir)
+    maxWidth, maxHeight = crop_clean_symbols(sourcesymboldir, symbolsdir)
     print("Finished cropping and cleaning process")
     print("starting rescaling process")
     rescale_images(outputdir, maxWidth, maxHeight)
+
+    print("Starting processing scrolls.")
+    pre_processing(sourcescollsdir, scrollsdir)
+    print("Finished processing scrolls.")
 
 
 
