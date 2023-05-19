@@ -8,8 +8,8 @@ ia.seed(1)
 
 
 def read_images(path):
-    srcimage = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
-
+    #srcimage = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+    cv2.imread(path,-1)
 
 seq = iaa.Sequential([
 
