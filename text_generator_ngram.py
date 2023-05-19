@@ -135,18 +135,18 @@ def create_ngram_model(n, path):
     df = pd.read_excel(path)
     posterior_prob = df[["Names","Probabilities"]]
     text = df["Names"]
-    print(text)
+    # print(text)
     text = text.str.replace('_', ' ')
     text = text.str.replace('Tsadi', 'Tsadi-medial')
     text = text.str.replace('Tasdi-final', 'Tsadi-final')
-    print(text)
+    # print(text)
     # text = text.split('.')
     text = text.values.tolist()
-    print(text)
+    # print(text)
 
     for sentence in text:
         # add back the fullstop
-        print(sentence)
+        # print(sentence)
         if sentence:
             sentence += '.'
             m.update(sentence, posterior_prob)
