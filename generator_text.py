@@ -11,7 +11,7 @@ import string
 # should be based on N-gram probability distribution
 WORD_LENGTH = 10
 TEXT_LENGTH= 200 *  np.random.randint(5, size=1)[0]
-# TEXT_LENGTH= 1000
+# TEXT_LENGTH= 10
 SCRIPT_SIZE = 608
 NGRAM_SIZE = 4
 Box = [float, float, float, float]
@@ -156,15 +156,16 @@ def stitch(images, text):
     start_offset = x_offset
     y_offset = PADDING *  np.random.randint(1, 2, size=1)[0]
     for idx, im in enumerate(images_type):
-
-        if x_offset + im.size[0]+ start_offset >= WIDTH:
+        print("x_offset: ", x_offset)
+        if new_im.size[0] - (x_offset + im.size[0]) <= start_offset:
             print(int((max_height - im.size[1]) / 2))
             print(max_height)
             print(y_offset)
             y_offset = y_offset + int((max_height - im.size[1]) / 2) + max_height
-            print("new line: ", x_offset + im.size[0])
+
             print("y_offset  ", y_offset)
             x_offset = start_offset
+            print("new line: ", x_offset)
         else :
             #  CHANGE Y OFFSET BASED ON (NEW_IMG.HEIGTH - IM.HEIGTH) / 2
             # y_offset = y_offset + int((max_height - im.size[1])/2)
@@ -177,13 +178,13 @@ def stitch(images, text):
         # im.show()
         #  crop(left, top, right, bottom)
         print(im.size[0])
-        cropping = np.random.randint(5, 10, size=1)[0]
+        cropping = np.random.randint(5, 15, size=1)[0]
         if im.size[0] > 30:
             im = im.crop((cropping,  0, im.size[0]-cropping, im.size[1]))
-        new_im.paste(im, (x_offset - cropping, y_offset))
+        new_im.paste(im, (new_im.size[0] - (x_offset + im.size[0]), y_offset))
         w = im.size[0]
         h = im.size[1]
-        x_c = x_offset + w / 2
+        x_c = new_im.size[0] -  (x_offset + w / 2)
         y_c = y_offset + h / 2
         box = [x_c, y_c, w, h]
         label = text[idx]
@@ -193,7 +194,8 @@ def stitch(images, text):
         print(box)
         # new_im.show()
         #  slide the upper left corner for pasting next image next iter
-        x_offset += im.size[0]-cropping
+        x_offset = x_offset + im.size[0]+cropping
+        print("x_offset end : ", x_offset, im.size[0])
     new_im.save(SCRIPT_NAME + '.png')
 
 def resize_with_padding(img, expected_size):
