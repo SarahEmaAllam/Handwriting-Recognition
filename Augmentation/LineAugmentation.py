@@ -14,11 +14,10 @@ ia.seed(1)
 
 
 def gen_random_img_list(path, list_len):
-    random_dir = random.choice(os.listdir(path))
-    random_file = random.choice(os.listdir(os.path.join(path, random_dir)))
     img_list = []
     for i in range(0, list_len):
-        print(i)
+        random_dir = random.choice(os.listdir(path))
+        random_file = random.choice(os.listdir(os.path.join(path, random_dir)))
         img = iio.imread(os.path.join(path, random_dir, random_file))
         img_list.append(img)
     return img_list
@@ -26,15 +25,14 @@ def gen_random_img_list(path, list_len):
 
 def rotate_by_degree(img_list):
     nr = len(img_list)
-    print(nr)
-    degree_diff = 90 / (nr - 1) if nr < 0 else nr
+    print('listlänge',nr)
+    degree_diff = 90 / (nr - 1) if nr > 1 else nr
     degree_start = -degree_diff
     degree_end = 0
     aug_img_list = []
     for img in img_list:
         rotate = iaa.Affine(rotate=(degree_start, degree_end), mode='constant')
         image_aug = rotate(image=img)
-        ia.imshow(image_aug)
         print('start', degree_start)
         print('end', degree_end)
         degree_start = degree_end
@@ -55,11 +53,11 @@ def rotate_several_by_degree(img_list):
     for line in range(nr_lines):
         rand_chunks = chunks(img_list, nr_lines)
         for chunk in rand_chunks:
-            ia.imshow(np.hstack(chunk))
+            #ia.imshow(np.hstack(chunk))
             aug_rand_sample = rotate_by_degree(chunk)
-            ia.imshow(np.hstack(aug_rand_sample))
+            #ia.imshow(np.hstack(aug_rand_sample))
             final_img_list += aug_rand_sample
-    # return final_img_list
+    return final_img_list
 
 
 def random_rotation_by_list(path):
@@ -83,6 +81,6 @@ def random_rotation_by_list(path):
 
 if __name__ == '__main__':
     path = '../../Ressources/'
-    img_list = gen_random_img_list(path, 5)
-    rotate_several_by_degree(img_list)
-    # ia.imshow(np.hstack(rotate_several_by_degree(img_list)))
+    img_list = gen_random_img_list(path, 35)
+    #rotate_several_by_degree(img_list)
+    ia.imshow(np.hstack(rotate_several_by_degree(img_list)))

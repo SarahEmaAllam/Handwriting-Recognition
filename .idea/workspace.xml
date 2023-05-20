@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a45769a7-c94a-44c7-b747-eefd0fc58de7" name="Changes" comment="rotate list by degree working; also random batch of letters">
+    <list default="true" id="a45769a7-c94a-44c7-b747-eefd0fc58de7" name="Changes" comment="several lines augmentation works">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Augmentation/LineAugmentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Augmentation/LineAugmentation.py" afterDir="false" />
     </list>
@@ -99,7 +99,7 @@
       <workItem from="1684349744884" duration="4180000" />
       <workItem from="1684492865401" duration="948000" />
       <workItem from="1684567287977" duration="852000" />
-      <workItem from="1684601813410" duration="5454000" />
+      <workItem from="1684601813410" duration="6798000" />
     </task>
     <task id="LOCAL-00001" summary="set up">
       <created>1684492710564</created>
@@ -136,7 +136,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684603813749</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="several lines augmentation works">
+      <created>1684607538273</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1684607538273</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -158,10 +165,11 @@
     <MESSAGE value="trying to read pgm into imgaug" />
     <MESSAGE value="ignore idea dir" />
     <MESSAGE value="rotate list by degree working; also random batch of letters" />
-    <option name="LAST_COMMIT_MESSAGE" value="rotate list by degree working; also random batch of letters" />
+    <MESSAGE value="several lines augmentation works" />
+    <option name="LAST_COMMIT_MESSAGE" value="several lines augmentation works" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Handwriting_Recognition$main.coverage" NAME="main Coverage Results" MODIFIED="1684349805454" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/wezel" />
-    <SUITE FILE_PATH="coverage/Handwriting_Recognition$LineAugmentation.coverage" NAME="LineAugmentation Coverage Results" MODIFIED="1684607290208" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Augmentation" />
+    <SUITE FILE_PATH="coverage/Handwriting_Recognition$LineAugmentation.coverage" NAME="LineAugmentation Coverage Results" MODIFIED="1684608319759" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Augmentation" />
   </component>
 </project>
