@@ -1,3 +1,4 @@
+import imageio
 import numpy as np
 import imgaug as ia
 import imageio.v3 as iio
@@ -8,7 +9,6 @@ from wezel.main import assert_dir
 from PIL import Image
 
 ia.seed(1)
-
 
 
 def read_images(path):
@@ -33,9 +33,17 @@ if __name__ == '__main__':
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     '''
-    path = 'navis-QIrug-Qumran_extr09_0001-line-008-y1=400-y2=515-zone-HUMAN-x=1650-y=0049-w=0035-h=0042-ybas=0027-nink=631-segm=COCOS5cocos.pgm'
-    srcimage = cv2.imread(path, -1)
-    srcimage = srcimage.astype(np.uint8)
-
-    im = iio.imread('imageio:'+path)
+    # path = 'navis-QIrug-Qumran_extr09_0001-line-008-y1=400-y2=515-zone-HUMAN-x=1650-y=0049-w=0035-h=0042-ybas=0027-nink=631-segm=COCOS5cocos.pgm'
+    # srcimage = cv2.imread(path, -1)
+    # srcimage = srcimage.astype(np.uint8)
+    path = 'pics/navis-QIrug-Qumran_extr09_0001-line-008-y1=400-y2=515-zone-HUMAN-x=1650-y=0049-w=0035-h=0042-ybas=0027-nink=631-segm=COCOS5cocos.jpg'
+    im = iio.imread(path)
     ia.imshow(im)
+
+    ia.seed(4)
+
+    rotate = iaa.Affine(rotate=(-25, 25))
+    image_aug = rotate(image=im)
+
+    print("Augmented:")
+    ia.imshow(image_aug)
