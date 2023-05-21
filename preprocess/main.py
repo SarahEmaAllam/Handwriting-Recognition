@@ -3,6 +3,10 @@ import cv2
 import numpy as np
 
 
+def is_image_file(filename):
+    return filename.lower().endswith(('.png', '.jpg', '.jpeg', '.tif', '.tiff', '.bmp', '.gif', 'pmg'))
+
+
 def detect_on_edge(labels, amount):
     length, width = labels.shape
     edgelabels = np.zeros(amount)
@@ -38,13 +42,15 @@ def crop_clean_symbols(inputdir, outputdir):
     max_width = 0
     max_height = 0
 
-    for subdir, _, files in os.walk(inputdir):
+    for (subdir, _, files) in os.walk(inputdir):
         print("Start crop clean: " + os.path.basename(subdir))
         fulloutpath = outputdir + "/" + os.path.basename(subdir) + "/"
 
         assert_dir(fulloutpath)
 
         for file in files:
+            if not is_image_file(file):
+                continue
             filepath = os.path.join(subdir, file)
             srcimage = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
             blurred = cv2.GaussianBlur(srcimage, (3, 3), 0)
@@ -85,9 +91,11 @@ def crop_clean_symbols(inputdir, outputdir):
 
 def rescale_images(imgdir, max_width, max_height):
 
-    for subdir, _, files in os.walk(imgdir):
+    for (subdir, _, files) in os.walk(imgdir):
         print("Start rescaling: " + os.path.basename(subdir))
         for file in files:
+            if not is_image_file(file):
+                continue
             filepath = os.path.join(subdir, file)
             srcimage = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
             height, width = srcimage.shape
@@ -95,7 +103,9 @@ def rescale_images(imgdir, max_width, max_height):
             bottom = (max_height - height + 1) // 2
             left = (max_width - width) // 2
             right = (max_width - width + 1) // 2
-            outputimg = cv2.copyMakeBorder(srcimage, top, bottom, left, right, cv2.BORDER_CONSTANT, value=[255, 255, 255])
+            outputimg = cv2.copyMakeBorder(srcimage, top, bottom, left, right,
+                                           cv2.BORDER_CONSTANT,
+                                           value=[255, 255, 255])
             cv2.imwrite(filepath, outputimg)
 
         print("Finished rescaling: " + os.path.basename(subdir))
