@@ -5,17 +5,15 @@ import time
 from typing import List
 import pandas as pd
 
-
 def tokenize(text: str) -> List[str]:
     """
     :param text: Takes input sentence
     :return: tokenized sentence
     """
     for punct in string.punctuation.replace("-", ''):
-        text = text.replace(punct, ' ' + punct + ' ')
+        text = text.replace(punct, ' '+punct+' ')
     t = text.split()
     return t
-
 
 def get_ngrams(n: int, tokens: list) -> list:
     """
@@ -26,16 +24,13 @@ def get_ngrams(n: int, tokens: list) -> list:
     ngrams of tuple form: ((previous wordS!), target word)
     """
     # tokens.append('<END>')
-    tokens = (n - 1) * ['<START>'] + tokens
+    tokens = (n-1)*['<START>']+tokens
     l = []
     for i in range(n - 1, len(tokens)):
         tu = tuple()
         for p in reversed(range(n - 1)):
             tu = tu + (tokens[i - p - 1],)
         l.append((tu, tokens[i]))
-
-    # l = [(tuple([tokens[i-p-1] for p in reversed(range(n-1))]), tokens[i]) for i in range(n-1, len(tokens))]
-    # print(l)
     return l
 
 
@@ -57,17 +52,13 @@ class NgramModel(object):
         """
         n = self.n
         ngrams = get_ngrams(n, tokenize(sentence))
-        # print(ngrams)
         for ngram in ngrams:
-            # print("ngram: ", ngram)
             if ngram in self.ngram_counter:
                 self.ngram_counter[ngram] += 1.0
             else:
                 self.ngram_counter[ngram] = 1.0
 
-            # print("posterior probability: ", posterior_prob)
-            # print(f"ngram_counter of {ngram} is {self.ngram_counter[ngram]}")
-            # print("TRANSFORMATION : ",  ngram[0].replace(", ", "_") )
+            # TODO: UPDATE THE N-GRAM TO INCLUDE POSTERIOR PROBABILITY BY FREQUENCY OF WORD
             # posterior_prob_extr = posterior_prob[posterior_prob.iloc[:,0] == ngram[0].replace(" ", "_")]
             # print("posterior prob : ", posterior_prob_extr)
             # self.ngram_counter[ngram] *= posterior_prob_extr
@@ -135,38 +126,34 @@ def create_ngram_model(n, path):
     m = NgramModel(n)
 
     df = pd.read_excel(path)
-    posterior_prob = df[["Names", "Probabilities"]]
+    posterior_prob = df[["Names","Probabilities"]]
     text = df["Names"]
-    # print(text)
     text = text.str.replace('_', ' ')
     text = text.str.replace('Tsadi', 'Tsadi-medial')
     text = text.str.replace('Tasdi-final', 'Tsadi-final')
-    # print(text)
-    # text = text.split('.')
     text = text.values.tolist()
-    # print(text)
 
     for sentence in text:
         # add back the fullstop
-        # print(sentence)
         if sentence:
             sentence += '.'
             m.update(sentence, posterior_prob)
     return m, posterior_prob
 
 
+
 def generator(TEXT_LENGTH, NGRAM_SIZE):
     start = time.time()
-    m, posterior_prob = create_ngram_model(NGRAM_SIZE,
-                                           'ngrams_frequencies_withNames_prob.xlsx')
+    m, posterior_prob = create_ngram_model(NGRAM_SIZE, 'ngrams_frequencies_withNames_prob.xlsx')
 
-    print(f'Language Model creating time: {time.time() - start}')
+    print (f'Language Model creating time: {time.time() - start}')
     random.seed(7)
-    print(f'{"=" * 50}\nGenerated text:')
+    print(f'{"="*50}\nGenerated text:')
     text = m.generate_text(TEXT_LENGTH)
     print("TEXT")
     print(text)
-    print(f'{"=" * 50}')
+    print(f'{"="*50}')
     return text
 
+# call generator
 # generator(1000, 4)
