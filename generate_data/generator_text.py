@@ -1,5 +1,3 @@
-import math
-import matplotlib.pyplot as plt
 import cv2
 import os
 import numpy as np
@@ -11,6 +9,7 @@ import string
 import imgaug.augmenters as iaa
 
 # should be based on N-gram probability distribution
+FOLDER = 'train'
 WORD_LENGTH = 10
 TEXT_LENGTH = 200 * np.random.randint(1, 5, size=1)[0]
 # TEXT_LENGTH = 10
@@ -143,7 +142,7 @@ def draw_boxes(img, x, y, w, h):
     cv2.waitKey(0)
 
 
-def stitch(images, text):
+def stitch(images, text, FOLDER, SCRIPT_NAME):
     """
     Create a new image for the script with fixed size. Start adding from right to left
     the selected letters from the generated text. When PADDING is reached in width (x-axis), make
@@ -193,7 +192,7 @@ def stitch(images, text):
         # new_im.show()
         #  slide the upper left corner for pasting next image next iter
         x_offset = x_offset + im.size[0] + cropping
-    new_im.save(SCRIPT_NAME + '.png')
+    new_im.save(os.path.join('data', FOLDER, SCRIPT_NAME + '.png'))
 
 def transform_letter(image: Image.Image) -> Image.Image:
     """
@@ -246,10 +245,9 @@ def sample_text_generator(TEXT_LENGTH, NGRAM_SIZE):
     script = np.array(script)
     return script, text
 
-
-class_names = glob(LETTERS_FOLDER + os.sep+ "*", recursive=False)
-images = load_classes(class_names)
-
-script, text = sample_text_generator(TEXT_LENGTH, NGRAM_SIZE)
-stitched = stitch(script, text)
+def generate_sample(FOLDER, SCRIPT_NAME):
+    # class_names = glob(LETTERS_FOLDER + os.sep+ "*", recursive=False)
+    # images = load_classes(class_names)
+    script, text = sample_text_generator(TEXT_LENGTH, NGRAM_SIZE)
+    stitch(script, text, FOLDER, SCRIPT_NAME)
 
