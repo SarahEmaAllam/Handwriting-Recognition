@@ -1,5 +1,5 @@
 import math
-
+import matplotlib.pyplot as plt
 import cv2
 import os
 import numpy as np
@@ -14,7 +14,7 @@ import imgaug.augmenters as iaa
 WORD_LENGTH = 10
 TEXT_LENGTH = 200 * np.random.randint(1, 5, size=1)[0]
 # TEXT_LENGTH = 10
-SCRIPT_SIZE = 608
+# SCRIPT_SIZE = 608
 NGRAM_SIZE = 4
 Box = [float, float, float, float]
 WIDTH = 1700
@@ -121,6 +121,28 @@ def load_classes(folders):
 #     return ImageOps.expand(img, padding)
 
 
+def draw_boxes(img, x, y, w, h):
+    dh, dw, _ = np.asarray(img).shape
+    l = int((x - w / 2) * dw)
+    r = int((x + w / 2) * dw)
+    t = int((y - h / 2) * dh)
+    b = int((y + h / 2) * dh)
+
+    if l < 0:
+        l = 0
+    if r > dw - 1:
+        r = dw - 1
+    if t < 0:
+        t = 0
+    if b > dh - 1:
+        b = dh - 1
+
+    image = cv2.rectangle(np.asarray(img), (l, t), (r, b), (255, 0, 0) , 1)
+    cv2.imshow('image', image)
+    # Displaying the image
+    cv2.waitKey(0)
+
+
 def stitch(images, text):
     """
     Create a new image for the script with fixed size. Start adding from right to left
@@ -156,13 +178,17 @@ def stitch(images, text):
         new_im.paste(im, (new_im.size[0] - (x_offset + im.size[0]), y_offset))
         w = im.size[0]
         h = im.size[1]
-        x_c = new_im.size[0] - (x_offset + w / 2)
-        y_c = y_offset + h / 2
+        x_c = (new_im.size[0] - (x_offset + w / 2)) / WIDTH
+        y_c = (y_offset + h / 2) / HEIGHT
+        w = w / WIDTH
+        h = h / HEIGHT
         box = [x_c, y_c, w, h]
         label = text[idx]
         # skip punctuations, do not save their labels, yolo should not learn them
         if label not in string.punctuation:
             save_coco_label(SCRIPT_NAME, label, box, PATH)
+            # uncomment ot draw boxes
+            # draw_boxes(new_im, x_c, y_c, w, h)
         # uncomment to see the process of stitching
         # new_im.show()
         #  slide the upper left corner for pasting next image next iter
