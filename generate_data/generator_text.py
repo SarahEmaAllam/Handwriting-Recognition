@@ -19,7 +19,7 @@ NGRAM_SIZE = 4
 Box = [float, float, float, float]
 WIDTH = 640
 HEIGHT = 640
-PADDING = 10 * np.random.randint(5, size=1)[0]
+PADDING = 20 * np.random.randint(10, size=1)[0]
 WHITESPACE = 10
 PATH = os.getcwd()
 SCRIPT_NAME = 'test3'
@@ -164,10 +164,8 @@ def stitch(images, text, folder, script_name):
     start_offset = x_offset
     y_offset = PADDING * np.random.randint(1, 2, size=1)[0]
     for idx, im in enumerate(images_type):
-        print("before ", im.size)
         if im.size[0] > 1 and im.size[1] > 1:
             im = im.resize((int(im.size[0] / 2), int(im.size[1] / 2)))
-            print(im.size)
         if new_im.size[0] - (x_offset + im.size[0]) <= start_offset:
             y_offset = y_offset + int(max_height / 2)
             x_offset = start_offset
@@ -263,4 +261,4 @@ def generate_sample(folder, script_name):
 
     stitch(script, text, folder, script_name)
 
-generate_sample(FOLDER, SCRIPT_NAME)
+# generate_sample(FOLDER, SCRIPT_NAME)

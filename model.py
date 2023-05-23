@@ -6,23 +6,14 @@ from ultralytics import YOLO
 from pathlib import Path
 TRAIN_SIZE = 5000
 VAL_SIZE = 2000
-FOLDER = 'data'
+FOLDER = 'train'
 SCRIPT_NAME = 'script-'
 DET_MODEL_NAME = "yolov8s"
 IMAGE_PATH = os.path.join(FOLDER, SCRIPT_NAME)
-det_model = YOLO(f'{DET_MODEL_NAME}.pt')
-label_map = det_model.model.names
-
-res = det_model(IMAGE_PATH)
-
-# object detection model
-det_model_path = Path(f"{DET_MODEL_NAME}_openvino_model/{DET_MODEL_NAME}.xml")
-if not det_model_path.exists():
-    det_model.export(format="openvino", dynamic=True, half=False)
 
 # generate data and save them
-for iter in enumerate(range( TRAIN_SIZE)):
-    generator_text.generate_sample(FOLDER, SCRIPT_NAME)
+for idx, iter in enumerate(range( TRAIN_SIZE)):
+    generate_sample(FOLDER, SCRIPT_NAME + str(iter))
 
 # split into train and val
 
