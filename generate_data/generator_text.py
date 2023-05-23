@@ -12,7 +12,7 @@ from LineAugmentation import rotate
 # should be based on N-gram probability distribution
 FOLDER = 'train'
 WORD_LENGTH = 10
-TEXT_LENGTH = 200 * np.random.randint(1, 5, size=1)[0]
+TEXT_LENGTH = 100 * np.random.randint(1, 5, size=1)[0]
 # TEXT_LENGTH = 10
 # SCRIPT_SIZE = 608
 NGRAM_SIZE = 4
@@ -178,7 +178,7 @@ def stitch(images, text, folder, script_name):
         cropping = np.random.randint(7 , 10, size=1)[0]
         if im.size[0] > 10:
             im = im.crop((cropping, 0, im.size[0] - cropping, im.size[1]))
-        new_im.paste(im, (new_im.size[0] - x_offset, y_offset))
+        new_im.paste(im, (new_im.size[0] - (x_offset + im.size[0]), y_offset))
         w = im.size[0]
         h = im.size[1]
         x_c = (new_im.size[0] - (x_offset + w / 2)) / WIDTH
@@ -195,7 +195,7 @@ def stitch(images, text, folder, script_name):
         # uncomment to see the process of stitching
         # new_im.show()
         #  slide the upper left corner for pasting next image next iter
-        x_offset = x_offset + im.size[0] + cropping
+        x_offset = x_offset + im.size[0]
     new_im.save(os.path.join('..','data', 'images', folder, script_name + '.png'))
 
 def transform_letter(image: Image.Image) -> Image.Image:
