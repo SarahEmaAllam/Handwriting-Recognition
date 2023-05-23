@@ -53,5 +53,5 @@ def create_image(label, img_size):
 
 # Create a 50x50 image of the Alef token and save it to disk
 # To get the raw data cast it to a numpy array
-img = create_image('Alef', (50, 50))
-img.save('example_alef.png')
+# img = create_image('Alef', (50, 50))
+# img.save('example_alef.png')

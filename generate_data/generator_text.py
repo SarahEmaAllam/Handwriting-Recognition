@@ -7,6 +7,7 @@ from .text_generator_ngram import generator
 from typing import Union, Tuple
 import string
 import imgaug.augmenters as iaa
+from .generator_data import create_image
 from .LineAugmentation import rotate
 
 # should be based on N-gram probability distribution
@@ -19,8 +20,8 @@ NGRAM_SIZE = 4
 Box = [float, float, float, float]
 WIDTH = 640
 HEIGHT = 640
-PADDING = 20 * np.random.randint(10, size=1)[0]
-WHITESPACE = 10
+PADDING = 10 * np.random.randint(10, size=1)[0]
+WHITESPACE = 15
 PATH = os.getcwd()
 SCRIPT_NAME = 'test3'
 LETTERS_FOLDER = os.path.join('preprocess', 'output', 'symbols')
@@ -232,12 +233,17 @@ def sample_text_generator(TEXT_LENGTH, NGRAM_SIZE):
     for letter in text:
         if letter not in string.punctuation and letter != '':
             random_sample_idx = np.random.choice(len(images[letter]), 1)[0]
-            random_sample = images[letter][random_sample_idx]
+
+            if np.random.random_sample() < 0.5:
+                random_sample = create_image(letter, (64, 69)).convert('1')
+                random_sample = np.array(random_sample)
+            else:
+                random_sample = images[letter][random_sample_idx]
             # add some transformations to the image (letter)
             random_sample = transform_letter(random_sample)
         else:
             end_token = np.zeros(
-                [WHITESPACE, np.random.randint(3, size=1)[0] * WHITESPACE],
+                [WHITESPACE, np.random.randint(1, 3, size=1)[0] * WHITESPACE],
                 dtype=np.uint8)
             end_token.fill(255)
             random_sample = end_token
@@ -247,12 +253,12 @@ def sample_text_generator(TEXT_LENGTH, NGRAM_SIZE):
     script = np.array(script)
     return script, text
 
-def generate_sample(folder, script_name):
+def generate_sample(folder, script_name, text_length = TEXT_LENGTH):
     class_names = glob(LETTERS_FOLDER + os.sep+ "*", recursive=False)
     print(class_names)
 
     # images = load_classes(class_names)
-    script, text = sample_text_generator(TEXT_LENGTH, NGRAM_SIZE)
+    script, text = sample_text_generator(text_length, NGRAM_SIZE)
 
     # THIS IS VYVY'S PART
     # for im in script:
