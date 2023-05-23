@@ -1,7 +1,8 @@
 import os.path
-
-from ultralytics import YOLO
+from generate_data import text_generator_ngram
 from generate_data.generator_text import generate_sample
+from ultralytics import YOLO
+
 from pathlib import Path
 TRAIN_SIZE = 5000
 VAL_SIZE = 2000
@@ -21,7 +22,7 @@ if not det_model_path.exists():
 
 # generate data and save them
 for iter in enumerate(range( TRAIN_SIZE)):
-    generate_sample(FOLDER, SCRIPT_NAME)
+    generator_text.generate_sample(FOLDER, SCRIPT_NAME)
 
 # split into train and val
 

@@ -3,11 +3,11 @@ import os
 import numpy as np
 from glob import glob
 from PIL import Image, ImageOps
-from text_generator_ngram import generator
+from .text_generator_ngram import generator
 from typing import Union, Tuple
 import string
 import imgaug.augmenters as iaa
-from LineAugmentation import rotate
+from .LineAugmentation import rotate
 
 # should be based on N-gram probability distribution
 FOLDER = 'train'
@@ -23,7 +23,7 @@ PADDING = 10 * np.random.randint(5, size=1)[0]
 WHITESPACE = 10
 PATH = os.getcwd()
 SCRIPT_NAME = 'test3'
-LETTERS_FOLDER = os.path.join('..','preprocess', 'output', 'symbols')
+LETTERS_FOLDER = os.path.join('preprocess', 'output', 'symbols')
 # LETTERS_FOLDER = '../data/preprocessed_images/symbols'
 
 
@@ -66,7 +66,7 @@ def save_coco_label(file: str, label: str, points: Box, path: str):
     h = points[3]
     label = '{} {} {} {} {}'.format(label, x_c, y_c, w, h).replace('"', '')
     file = str(file) + '.txt'
-    with open(os.path.join("..","data", "labels", FOLDER, str(file)), 'a') as f:
+    with open(os.path.join("data", "labels", FOLDER, str(file)), 'a') as f:
         f.write(label)
         f.write("\n")
         f.close()
@@ -99,7 +99,7 @@ def load_classes(folders):
     classes = {}
     for folder_class in folders:
         class_data = load_class_images(folder_class)
-        class_name = folder_class.split(os.sep)[4]
+        class_name = folder_class.split(os.sep)[3]
         classes[class_name] = class_data
     return classes
 
@@ -175,7 +175,7 @@ def stitch(images, text, folder, script_name):
             #  CHANGE Y OFFSET BASED ON (NEW_IMG.HEIGTH - IM.HEIGTH) / 2
             y_offset = y_offset
             # (x_offset, 0) = upper left corner of the canvas where to paste
-        cropping = np.random.randint(7 , 10, size=1)[0]
+        cropping = np.random.randint(5 , 8, size=1)[0]
         if im.size[0] > 10:
             im = im.crop((cropping, 0, im.size[0] - cropping, im.size[1]))
         new_im.paste(im, (new_im.size[0] - (x_offset + im.size[0]), y_offset))
@@ -196,7 +196,7 @@ def stitch(images, text, folder, script_name):
         # new_im.show()
         #  slide the upper left corner for pasting next image next iter
         x_offset = x_offset + im.size[0]
-    new_im.save(os.path.join('..','data', 'images', folder, script_name + '.png'))
+    new_im.save(os.path.join('data', 'images', folder, script_name + '.png'))
 
 def transform_letter(image: Image.Image) -> Image.Image:
     """

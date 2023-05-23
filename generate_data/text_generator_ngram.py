@@ -4,6 +4,8 @@ import random
 import time
 from typing import List
 import pandas as pd
+import os
+PATH = os.getcwd()
 
 def tokenize(text: str) -> List[str]:
     """
@@ -144,7 +146,7 @@ def create_ngram_model(n, path):
 
 def generator(TEXT_LENGTH, NGRAM_SIZE):
     start = time.time()
-    m, posterior_prob = create_ngram_model(NGRAM_SIZE, 'ngrams_frequencies_withNames_prob.xlsx')
+    m, posterior_prob = create_ngram_model(NGRAM_SIZE, os.path.join(PATH, 'generate_data','ngrams_frequencies_withNames_prob.xlsx'))
 
     print (f'Language Model creating time: {time.time() - start}')
     random.seed(7)
@@ -154,6 +156,7 @@ def generator(TEXT_LENGTH, NGRAM_SIZE):
     print(text)
     print(f'{"="*50}')
     return text
+
 
 # call generator
 # generator(1000, 4)
