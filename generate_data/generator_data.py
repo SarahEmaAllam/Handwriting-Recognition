@@ -2,7 +2,8 @@
 from PIL import Image, ImageFont, ImageDraw
 
 # Load the font and set the font size to 42
-font = ImageFont.truetype('Habbakuk.ttf', 42)
+font_path = '../venv/lib/python3.10/site-packages/PIL/Fonts/habbakuk/Habbakuk.ttf'
+font = ImageFont.truetype(font_path, 42)
 
 # Character mapping for each of the 27 tokens
 char_map = {'Alef': ')',
@@ -36,7 +37,7 @@ char_map = {'Alef': ')',
 
 # Returns a grayscale image based on specified label of img_size
 def create_image(label, img_size):
-    if (label not in char_map):
+    if label not in char_map:
         raise KeyError('Unknown label!')
 
     # Create blank image and create a draw interface

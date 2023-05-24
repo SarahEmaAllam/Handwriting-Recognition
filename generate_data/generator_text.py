@@ -1,20 +1,21 @@
+import random
 import cv2
 import os
 import numpy as np
 from glob import glob
 from PIL import Image, ImageOps
-from .text_generator_ngram import generator
+from text_generator_ngram import generator
 from typing import Union, Tuple
 import string
 import imgaug.augmenters as iaa
-from .generator_data import create_image
-from .LineAugmentation import rotate
+from generator_data import create_image
+from LineAugmentation import rotate
 
 # should be based on N-gram probability distribution
 FOLDER = 'train'
 WORD_LENGTH = 10
 TEXT_LENGTH = 100 * np.random.randint(1, 5, size=1)[0]
-# TEXT_LENGTH = 10
+# text_len = 10
 # SCRIPT_SIZE = 608
 NGRAM_SIZE = 4
 Box = [float, float, float, float]
@@ -23,12 +24,14 @@ HEIGHT = 640
 PADDING = 10 * np.random.randint(10, size=1)[0]
 WHITESPACE = 15
 PATH = os.getcwd()
-SCRIPT_NAME = 'test3'
-LETTERS_FOLDER = os.path.join('preprocess', 'output', 'symbols')
-# LETTERS_FOLDER = '../data/preprocessed_images/symbols'
+SCRIPT_NAME = 'test'
+# LETTERS_FOLDER = os.path.join('preprocess', 'output', 'symbols')
+
+DATA_FOLDER = '../data'
+LETTERS_FOLDER = '../data/preprocessed_images/symbols'
 
 
-def resize_data(image: Image.Image, width: float, height: float) -> Tuple[
+def resize_data(image: Image.Image, width: int, height: int) -> Tuple[
     Image.Image, Tuple[float, float]]:
     """
     Normalizes images size to WIDTH and HEIGHT
@@ -67,7 +70,7 @@ def save_coco_label(file: str, label: str, points: Box, path: str):
     h = points[3]
     label = '{} {} {} {} {}'.format(label, x_c, y_c, w, h).replace('"', '')
     file = str(file) + '.txt'
-    with open(os.path.join("data", "labels", FOLDER, str(file)), 'a') as f:
+    with open(os.path.join(DATA_FOLDER, "labels", FOLDER, str(file)), 'a') as f:
         f.write(label)
         f.write("\n")
         f.close()
@@ -76,7 +79,7 @@ def save_coco_label(file: str, label: str, points: Box, path: str):
 def load_class_images(folder):
     """
     Load the images in a list from the specified folder
-    Name of folder should be name of each letter
+    Name of folder should be the name of each letter
     Parameters
     ----------
         folder (str): Name of folder to load images from
@@ -84,10 +87,11 @@ def load_class_images(folder):
 
     images = []
     for filename in os.listdir(folder):
-        img = cv2.imread(os.path.join(folder,filename),cv2.IMREAD_UNCHANGED)
+        img = cv2.imread(os.path.join(folder, filename), cv2.IMREAD_UNCHANGED)
         if img is not None:
             images.append(img)
     return images
+
 
 def load_classes(folders):
     """
@@ -100,7 +104,8 @@ def load_classes(folders):
     classes = {}
     for folder_class in folders:
         class_data = load_class_images(folder_class)
-        class_name = folder_class.split(os.sep)[3]
+        # # the last directory in the path folder_class
+        class_name = os.path.basename(os.path.normpath(folder_class))
         classes[class_name] = class_data
     return classes
 
@@ -138,7 +143,7 @@ def draw_boxes(img, x, y, w, h):
     if b > dh - 1:
         b = dh - 1
 
-    image = cv2.rectangle(np.asarray(img), (l, t), (r, b), (255, 0, 0) , 1)
+    image = cv2.rectangle(np.asarray(img), (l, t), (r, b), (255, 0, 0), 1)
     cv2.imshow('image', image)
     # Displaying the image
     cv2.waitKey(0)
@@ -174,7 +179,8 @@ def stitch(images, text, folder, script_name):
             #  CHANGE Y OFFSET BASED ON (NEW_IMG.HEIGTH - IM.HEIGTH) / 2
             y_offset = y_offset
             # (x_offset, 0) = upper left corner of the canvas where to paste
-        cropping = np.random.randint(5 , 8, size=1)[0]
+        # cropping = np.random.randint(5, 8, size=1)[0]
+        cropping = np.random.randint(5, 6, size=1)[0]
         if im.size[0] > 10:
             im = im.crop((cropping, 0, im.size[0] - cropping, im.size[1]))
         new_im.paste(im, (new_im.size[0] - (x_offset + im.size[0]), y_offset))
@@ -189,32 +195,109 @@ def stitch(images, text, folder, script_name):
         # skip punctuations, do not save their labels, yolo should not learn them
         if label not in string.punctuation:
             save_coco_label(script_name, label, box, PATH)
-            # uncomment ot draw boxes
+            # uncomment to draw boxes
             # draw_boxes(new_im, x_c, y_c, w, h)
         # uncomment to see the process of stitching
         # new_im.show()
         #  slide the upper left corner for pasting next image next iter
         x_offset = x_offset + im.size[0]
-    new_im.save(os.path.join('data', 'images', folder, script_name + '.png'))
 
-def transform_letter(image: Image.Image) -> Image.Image:
+    # augment the final image
+    new_im = transform_scroll(new_im)
+
+    new_im.save(
+        os.path.join(DATA_FOLDER, 'images', folder, script_name + '.png'))
+
+
+def get_random_param_values():
     """
-    Apply a series of transformations to the image and return the augmented image.
+    Get random values for the parameters of the image augmentation.
+    The same values are used for all the letters in a script.
     """
+    # random values for the parameters of the image augmentation
+    rotation = (-15, 15)
+    shear = (-15, 15)
+    gauss_blur_sigma = (0, 2.0)
+    crop = (-0.2, 0.2)
+    elastic_alpha = (0, 20)
+    elastic_sigma = (4, 6)
+
+    # for each parameter, select a random value from the range
+    rotation = random.uniform(*rotation)
+    shear = random.uniform(*shear)
+    gauss_blur_sigma = random.uniform(*gauss_blur_sigma)
+    crop = random.uniform(*crop)
+    elastic_alpha = random.uniform(*elastic_alpha)
+    elastic_sigma = random.uniform(*elastic_sigma)
+
+    return rotation, shear, gauss_blur_sigma, crop, elastic_alpha, elastic_sigma
+
+
+def pil_to_ndarray(image) -> np.ndarray:
+    """
+    Convert a PIL image to a numpy array.
+    """
+    image = np.asarray(image)
+    return image
+
+
+def ndarray_to_pil(image: np.ndarray) -> Image:
+    """
+    Convert a numpy array to a PIL image.
+    """
+    image = Image.fromarray(image)
+    return image
+
+
+def transform_letter(image: np.ndarray, rotation: float, shear: float,
+                     gauss_blur_sigma: float, crop: float, elastic_alpha: float,
+                     elastic_sigma: float) -> np.ndarray:
+    """
+    Apply a series of transformations to the letter image and return the augmented image.
+    """
+    image = pil_to_ndarray(image)
+
+    # the same augmentation applied to be applied to each letter image in a script
     aug = iaa.Sequential([
-        iaa.Affine(rotate=(-15, 15), shear=(-15, 15), mode='constant', cval=255),
-        iaa.GaussianBlur(sigma=(0, 2.0)),
+        iaa.Affine(rotate=rotation, shear=shear, mode='constant', cval=255),
+        iaa.GaussianBlur(sigma=gauss_blur_sigma),
         iaa.KeepSizeByResize(
-            iaa.CropAndPad(percent=(-0.1, 0.1), pad_mode='constant', pad_cval=255)),
+            iaa.CropAndPad(percent=crop, pad_mode='constant', pad_cval=255)),
         iaa.Pad(px=2, pad_mode='constant', pad_cval=255),
-        iaa.ElasticTransformation(alpha=(0, 20), sigma=(4, 6)),
+        iaa.ElasticTransformation(alpha=elastic_alpha, sigma=elastic_sigma),
         iaa.size.Crop(px=2)
     ])
 
-    return aug(image=image)
+    aug_image = aug(image=image)
+
+    # apply a random harser crop (up to 50% of the image)
+    aug_crop = iaa.KeepSizeByResize(
+        iaa.CropAndPad(percent=(-0.5, 0.5), pad_mode='constant', pad_cval=255))
+
+    # with a small probability, crop the image
+    if np.random.random_sample() < 0.1:
+        aug_image = aug_crop(image=aug_image)
+
+    return aug_image
 
 
-def sample_text_generator(TEXT_LENGTH, NGRAM_SIZE):
+def transform_scroll(image) -> Image:
+    """
+    Apply a series of transformations to the script image and return the augmented image.
+    """
+    image = pil_to_ndarray(image)
+
+    # random cutouts with white pixels to simulate noise/scroll erosion
+    cutout = iaa.Cutout(nb_iterations=(50, 100), size=(0.01, 0.05),
+                        squared=False, fill_mode="constant", cval=255)
+
+    aug_image = cutout(image=image)
+    aug_image = ndarray_to_pil(aug_image)
+
+    return aug_image
+
+
+def sample_text_generator(text_len, ngram_size):
     """
     Main function calling all the other helper function.
     Generate text, transform it into script.
@@ -222,13 +305,16 @@ def sample_text_generator(TEXT_LENGTH, NGRAM_SIZE):
     Parameters
     ----------
     """
-    class_names = glob(LETTERS_FOLDER + os.sep+"*", recursive=False)
+    class_names = glob(LETTERS_FOLDER + os.sep + "*", recursive=False)
     images = load_classes(class_names)
-    text = generator(TEXT_LENGTH, NGRAM_SIZE)
+    text = generator(text_len, ngram_size)
 
     # remove all dots from text to prepare text for labelling
     text = text.split(" ")
     script = []
+
+    # set the parameters for the image augmentation
+    params = get_random_param_values()
 
     for letter in text:
         if letter not in string.punctuation and letter != '':
@@ -240,7 +326,7 @@ def sample_text_generator(TEXT_LENGTH, NGRAM_SIZE):
             else:
                 random_sample = images[letter][random_sample_idx]
             # add some transformations to the image (letter)
-            random_sample = transform_letter(random_sample)
+            random_sample = transform_letter(random_sample, *params)
         else:
             end_token = np.zeros(
                 [WHITESPACE, np.random.randint(1, 3, size=1)[0] * WHITESPACE],
@@ -250,11 +336,12 @@ def sample_text_generator(TEXT_LENGTH, NGRAM_SIZE):
 
         script.append(random_sample)
 
-    script = np.array(script)
+    script = np.array(script, dtype=object)
     return script, text
 
-def generate_sample(folder, script_name, text_length = TEXT_LENGTH):
-    class_names = glob(LETTERS_FOLDER + os.sep+ "*", recursive=False)
+
+def generate_sample(folder, script_name, text_length=TEXT_LENGTH):
+    class_names = glob(LETTERS_FOLDER + os.sep + "*", recursive=False)
     print(class_names)
 
     # images = load_classes(class_names)
@@ -267,4 +354,11 @@ def generate_sample(folder, script_name, text_length = TEXT_LENGTH):
 
     stitch(script, text, folder, script_name)
 
-# generate_sample(FOLDER, SCRIPT_NAME)
+
+# for i in range(10):
+#     generate_sample(FOLDER, f"sample{i}_with_crop_and_cutout")
+
+generate_sample(FOLDER, "test")
+
+
+

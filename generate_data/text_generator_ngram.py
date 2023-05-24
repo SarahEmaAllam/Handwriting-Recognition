@@ -5,7 +5,9 @@ import time
 from typing import List
 import pandas as pd
 import os
+
 PATH = os.getcwd()
+
 
 def tokenize(text: str) -> List[str]:
     """
@@ -13,9 +15,10 @@ def tokenize(text: str) -> List[str]:
     :return: tokenized sentence
     """
     for punct in string.punctuation.replace("-", ''):
-        text = text.replace(punct, ' '+punct+' ')
+        text = text.replace(punct, ' ' + punct + ' ')
     t = text.split()
     return t
+
 
 def get_ngrams(n: int, tokens: list) -> list:
     """
@@ -26,7 +29,7 @@ def get_ngrams(n: int, tokens: list) -> list:
     ngrams of tuple form: ((previous wordS!), target word)
     """
     # tokens.append('<END>')
-    tokens = (n-1)*['<START>']+tokens
+    tokens = (n - 1) * ['<START>'] + tokens
     l = []
     for i in range(n - 1, len(tokens)):
         tu = tuple()
@@ -128,7 +131,7 @@ def create_ngram_model(n, path):
     m = NgramModel(n)
 
     df = pd.read_excel(path)
-    posterior_prob = df[["Names","Probabilities"]]
+    posterior_prob = df[["Names", "Probabilities"]]
     text = df["Names"]
     text = text.str.replace('_', ' ')
     text = text.str.replace('Tsadi', 'Tsadi-medial')
@@ -143,20 +146,20 @@ def create_ngram_model(n, path):
     return m, posterior_prob
 
 
-
 def generator(TEXT_LENGTH, NGRAM_SIZE):
     start = time.time()
-    m, posterior_prob = create_ngram_model(NGRAM_SIZE, os.path.join(PATH, 'generate_data','ngrams_frequencies_withNames_prob.xlsx'))
+    # m, posterior_prob = create_ngram_model(ngram_size, os.path.join(PATH, 'generate_data','ngrams_frequencies_withNames_prob.xlsx'))
+    m, posterior_prob = create_ngram_model(NGRAM_SIZE, os.path.join(PATH,
+                                                                    'ngrams_frequencies_withNames_prob.xlsx'))
 
-    print (f'Language Model creating time: {time.time() - start}')
-    random.seed(7)
-    print(f'{"="*50}\nGenerated text:')
+    print(f'Language Model creating time: {time.time() - start}')
+    # random.seed(7)
+    print(f'{"=" * 50}\nGenerated text:')
     text = m.generate_text(TEXT_LENGTH)
     print("TEXT")
     print(text)
-    print(f'{"="*50}')
+    print(f'{"=" * 50}')
     return text
-
 
 # call generator
 # generator(1000, 4)
