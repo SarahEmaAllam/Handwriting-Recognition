@@ -29,32 +29,39 @@ def produce_data():
 
     # generate data and save them
     for idx, iter in enumerate(range( TRAIN_SIZE)):
-        TEXT_LENGTH = 100 * np.random.randint(1, MAX_TXT_LENGTH, size=1)[0]
+        TEXT_LENGTH = np.random.randint(1, 10*MAX_TXT_LENGTH, size=1)[0]
         generate_sample(FOLDER_TRAIN, SCRIPT_NAME + str(iter), text_length=TEXT_LENGTH)
 
     # split into train and val
     for idx, iter in enumerate(range( VAL_SIZE)):
-        TEXT_LENGTH = 100 * np.random.randint(1, MAX_TXT_LENGTH, size=1)[0]
+        TEXT_LENGTH = np.random.randint(1, 10*MAX_TXT_LENGTH, size=1)[0]
         generate_sample(FOLDER_VAL, SCRIPT_NAME + str(iter+TRAIN_SIZE+1), text_length=TEXT_LENGTH)
     
     for idx, iter in enumerate(range( TEST_SIZE)):
-        TEXT_LENGTH = 100 * np.random.randint(1, MAX_TXT_LENGTH, size=1)[0]
+        TEXT_LENGTH =  np.random.randint(1, 10*MAX_TXT_LENGTH, size=1)[0]
         generate_sample(FOLDER_TEST, SCRIPT_NAME + str(iter+TRAIN_SIZE+ VAL_SIZE + 1), text_length=TEXT_LENGTH)
 
 def set_optuna_study():
     study = optuna.create_study(sampler=optuna.samplers.TPESampler(), direction='maximize')
-    study.optimize(train_model, n_trials=20, direction='maximize')
+    study.optimize(train_model, n_trials=3)
     joblib.dump(study, os.path.join('studies','handwriting_optuna.pkl'))
 
 def results():
     study = joblib.load(os.path.join('studies','handwriting_optuna.pkl'))
-    df = study.trials_dataframe().drop(['state','datetime_start','datetime_complete','system_attrs'], axis=1)
-    df.head(10)
-    plot_optimization_history(study)
-    plot_intermediate_values(study)
-    plot_contour(study)
-    plot_param_importances(study)
-    print("Best trial:")
+    df = study.trials_dataframe()
+    print(df.head(10))
+    try:
+        opt_history = plot_optimization_history(study)
+        opt_history.write_image(os.path.join('studies', 'opt_history.png'))
+        # interm_values = plot_intermediate_values(study)
+        # opt_history.write_image(os.path.join('studies', 'opt_history.png'))
+        contour = plot_contour(study)
+        contour.write_image(os.path.join('studies', 'contour.png'))
+        param_importance = plot_param_importances(study)
+        param_importance.write_image(os.path.join('studies', 'param_importance.png'))
+        print("Best trial:")
+    except:
+        print("Plotting the optuna tuning failed")
     trial = study.best_trial
 
     print("  Value: ", trial.value)
@@ -94,10 +101,11 @@ def train_model(trial):
             'n_epochs' : 1,
             'lr'       : trial.suggest_loguniform('lr', 1e-3, 1e-2),          
             'momentum' : trial.suggest_uniform('momentum', 0.4, 0.99),
-            'optimizer': trial.suggest_categorical(['RMSProp', 'Adam']),
-            'cos_lr': trial.suggest_categorical([True, False]),
+            'optimizer': trial.suggest_categorical('optimizer', ['RMSProp', 'Adam']),
+            'cos_lr': trial.suggest_categorical('cos_lr', [True, False]),
             'patience': 200,
-            'save_period': 10}
+            'save_period': 10,
+            'iou': trial.suggest_uniform('iou', 0.5, 0.9),}
 
     #   train_loader, test_loader = get_mnist_loaders(cfg['train_batch_size'], cfg['test_batch_size'])
     # Training.
@@ -118,21 +126,23 @@ def train_model(trial):
     print("TRAINING RESULTS: ", results)
     # results = model.predict(conf = conf, iou = iou, save_crop=True, max_det = MAX_TXT_LENGTH * 100, )  # evaluate model performance on the test data set
     
-    metrics = model.val()  # no arguments needed, dataset and settings remembered
+    metrics = model.val(data='config.yaml', save_json=True, iou=cfg['iou'])  # no arguments needed, dataset and settings remembered
     # metrics.box.map    # map50-95
     # metrics.box.map50  # map50
     # metrics.box.map75  # map75
     # metrics.box.maps   # a list contains map50-95 of each category
-    success = YOLO("yolov8n.pt").export(format="onnx")  # export a model to ONNX
+    # success = YOLO("yolov8n.pt").export(format="onnx")  # export a model to ONNX
     print("TEST RESULTS: ", metrics)
-    for result in metrics:
-        boxes = result.boxes  # Boxes object for bbox outputs
-        print("boxes ", boxes)
-        # masks = result.masks  # Masks object for segmentation masks outputs
-        probs = result.probs  # Class probabilities for classification outputs  
-        print("probs : ", probs)
+    print(metrics.box.map)    # map50-95
+    print("DICT: ", metrics.results_dict)
+    print("mean_results() ", metrics.results_dict)
+    print(type(metrics.results_dict))
+    fitness = dict(metrics.results_dict)['fitness']
+    # metrics.box.map50  # map50
+    # metrics.box.map75  # map75
+    # metrics.box.maps   # a list contains map50-95 of each category
 
-    return results
+    return fitness
 
 if __name__ == '__main__':
     produce_data()

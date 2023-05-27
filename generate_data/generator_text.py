@@ -4,12 +4,12 @@ import os
 import numpy as np
 from glob import glob
 from PIL import Image, ImageOps
-from text_generator_ngram import generator
+from .text_generator_ngram import generator
 from typing import Union, Tuple
 import string
 import imgaug.augmenters as iaa
-from generator_data import create_image
-from LineAugmentation import rotate
+from .generator_data import create_image
+from .LineAugmentation import rotate
 
 # should be based on N-gram probability distribution
 FOLDER = 'train'
@@ -27,8 +27,35 @@ PATH = os.getcwd()
 SCRIPT_NAME = 'test'
 # LETTERS_FOLDER = os.path.join('preprocess', 'output', 'symbols')
 
-DATA_FOLDER = '../data'
-LETTERS_FOLDER = '../data/preprocessed_images/symbols'
+DATA_FOLDER = 'datasets'
+LETTERS_FOLDER = os.path.join('preprocess', 'output', 'symbols')
+labels = {  'Alef': 0, 
+  'Ayin': 1, 
+  'Bet': 2, 
+  'Dalet': 3, 
+  'Gimel': 4, 
+  'He': 5, 
+  'Het':6, 
+  'Kaf':7, 
+  'Kaf-final':8, 
+  'Lamed':9, 
+  'Mem':10, 
+  'Mem-medial':11, 
+  'Nun-final':12, 
+  'Nun-medial':13, 
+  'Pe':14, 
+  'Pe-final':15, 
+  'Qof':16, 
+  'Resh':17, 
+  'Samekh':18, 
+  'Shin':19, 
+  'Taw':20, 
+  'Tet':21, 
+  'Tsadi-final':22, 
+  'Tsadi-medial':23, 
+  'Waw':24, 
+  'Yod':25, 
+  'Zayin':26}
 
 
 def resize_data(image: Image.Image, width: int, height: int) -> Tuple[
@@ -54,7 +81,7 @@ def resize_data(image: Image.Image, width: int, height: int) -> Tuple[
     return resized_image, resized_shape
 
 
-def save_coco_label(file: str, label: str, points: Box, path: str):
+def save_coco_label(file: str, label_class: str, points: Box, path: str, folder: str):
     """
     Saves the label of the image in coco format: classs, x_c, y_c, w, h
 
@@ -68,9 +95,11 @@ def save_coco_label(file: str, label: str, points: Box, path: str):
     y_c = points[1]
     w = points[2]
     h = points[3]
-    label = '{} {} {} {} {}'.format(label, x_c, y_c, w, h).replace('"', '')
+    label_class = labels[label_class]
+    print("LABEL :", label_class)
+    label = '{} {} {} {} {}'.format(label_class, x_c, y_c, w, h).replace('"', '')
     file = str(file) + '.txt'
-    with open(os.path.join(DATA_FOLDER, "labels", FOLDER, str(file)), 'a') as f:
+    with open(os.path.join(DATA_FOLDER, "labels", folder, str(file)), 'a') as f:
         f.write(label)
         f.write("\n")
         f.close()
@@ -160,6 +189,7 @@ def stitch(images, text, folder, script_name):
     """
     images_type = []
     for i in images:
+
         i = Image.fromarray(i)
         images_type.append(i)
     widths, heights = zip(*(i.size for i in images_type))
@@ -194,7 +224,7 @@ def stitch(images, text, folder, script_name):
         label = text[idx]
         # skip punctuations, do not save their labels, yolo should not learn them
         if label not in string.punctuation:
-            save_coco_label(script_name, label, box, PATH)
+            save_coco_label(script_name, label, box, PATH, folder)
             # uncomment to draw boxes
             # draw_boxes(new_im, x_c, y_c, w, h)
         # uncomment to see the process of stitching
@@ -336,7 +366,7 @@ def sample_text_generator(text_len, ngram_size):
 
         script.append(random_sample)
 
-    script = np.array(script, dtype=object)
+    script = np.array(script)
     return script, text
 
 
@@ -358,7 +388,7 @@ def generate_sample(folder, script_name, text_length=TEXT_LENGTH):
 # for i in range(10):
 #     generate_sample(FOLDER, f"sample{i}_with_crop_and_cutout")
 
-generate_sample(FOLDER, "test")
+# generate_sample(FOLDER, "test")
 
 
 

@@ -148,9 +148,9 @@ def create_ngram_model(n, path):
 
 def generator(TEXT_LENGTH, NGRAM_SIZE):
     start = time.time()
-    # m, posterior_prob = create_ngram_model(ngram_size, os.path.join(PATH, 'generate_data','ngrams_frequencies_withNames_prob.xlsx'))
-    m, posterior_prob = create_ngram_model(NGRAM_SIZE, os.path.join(PATH,
-                                                                    'ngrams_frequencies_withNames_prob.xlsx'))
+    m, posterior_prob = create_ngram_model(NGRAM_SIZE, os.path.join(PATH, 'generate_data','ngrams_frequencies_withNames_prob.xlsx'))
+    # m, posterior_prob = create_ngram_model(NGRAM_SIZE, os.path.join(PATH,
+    #                                                                 'ngrams_frequencies_withNames_prob.xlsx'))
 
     print(f'Language Model creating time: {time.time() - start}')
     # random.seed(7)

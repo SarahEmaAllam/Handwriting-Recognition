@@ -8,3 +8,5 @@ Pillow==9.5.0
 ultralytics==8.0.43
 openpyxl==3.0.7
 optuna==3.1.1
+plotly==5.14.1
+kaleido==0.1.0.post1
