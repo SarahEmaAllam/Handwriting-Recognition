@@ -13,14 +13,14 @@ from optuna.visualization import plot_contour
 import matplotlib.pyplot as plt
 # from ultralytics.yolo.utils.metrics import ConfusionMatrix
 from pathlib import Path
-TRAIN_SIZE = 5
-VAL_SIZE = 2
-TEST_SIZE = 2
+TRAIN_SIZE = 6000
+VAL_SIZE = 3000
+TEST_SIZE = 1000
 FOLDER_TRAIN = 'train'
 FOLDER_VAL = 'val'
 FOLDER_TEST = 'test'
 SCRIPT_NAME = 'script-'
-DET_MODEL_NAME = "yolov8s"
+DET_MODEL_NAME = "yolov8x"
 MAX_TXT_LENGTH = 5
 PATH = os.getcwd()
 # IMAGE_PATH = os.path.join(FOLDER, SCRIPT_NAME)
@@ -29,16 +29,16 @@ def produce_data():
 
     # generate data and save them
     for idx, iter in enumerate(range( TRAIN_SIZE)):
-        TEXT_LENGTH = np.random.randint(1, 10*MAX_TXT_LENGTH, size=1)[0]
+        TEXT_LENGTH = np.random.randint(1, 100*MAX_TXT_LENGTH, size=1)[0]
         generate_sample(FOLDER_TRAIN, SCRIPT_NAME + str(iter), text_length=TEXT_LENGTH)
 
     # split into train and val
     for idx, iter in enumerate(range( VAL_SIZE)):
-        TEXT_LENGTH = np.random.randint(1, 10*MAX_TXT_LENGTH, size=1)[0]
+        TEXT_LENGTH = np.random.randint(1, 100*MAX_TXT_LENGTH, size=1)[0]
         generate_sample(FOLDER_VAL, SCRIPT_NAME + str(iter+TRAIN_SIZE+1), text_length=TEXT_LENGTH)
     
     for idx, iter in enumerate(range( TEST_SIZE)):
-        TEXT_LENGTH =  np.random.randint(1, 10*MAX_TXT_LENGTH, size=1)[0]
+        TEXT_LENGTH =  np.random.randint(1, 100*MAX_TXT_LENGTH, size=1)[0]
         generate_sample(FOLDER_TEST, SCRIPT_NAME + str(iter+TRAIN_SIZE+ VAL_SIZE + 1), text_length=TEXT_LENGTH)
 
 def set_optuna_study():
@@ -96,14 +96,14 @@ def train_model(trial):
     # Load a pretrained YOLO model (recommended for training)
     model = YOLO('yolov8n.pt')
   
-    cfg = { 'train_batch_size' : 2,
-            'test_batch_size' : 1,
-            'n_epochs' : 1,
+    cfg = { 'train_batch_size' : 32,
+            'test_batch_size' : 32,
+            'n_epochs' : 200,
             'lr'       : trial.suggest_loguniform('lr', 1e-3, 1e-2),          
             'momentum' : trial.suggest_uniform('momentum', 0.4, 0.99),
             'optimizer': trial.suggest_categorical('optimizer', ['RMSProp', 'Adam']),
             'cos_lr': trial.suggest_categorical('cos_lr', [True, False]),
-            'patience': 200,
+            'patience': 50,
             'save_period': 10,
             'iou': trial.suggest_uniform('iou', 0.5, 0.9),}
 
