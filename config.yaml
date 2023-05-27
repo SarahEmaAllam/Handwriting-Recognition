@@ -1,11 +1,11 @@
 # class names
-names : ['indian_tiger', 'indian_elephant', 'indian_rhinoceros', 'indian_bison', 'indian_leopard', 'asiatic_lion']
-
-
-#number of classes
-nc: 6
-
-
-# location of train and test data
-train: ".data/images/train"
-val: ".data/images/val"
+names : ['Alef', 'Ayin', 'Bet', 'Dalet', 'Gimel', 'He', 'Het', 'Kaf', 'Kaf-final', 'Lamed', 'Mem', 'Mem-medial', 'Nun-final', 'Nun-medial', 'Pe', 'Pe-final', 'Qof', 'Resh', 'Samekh', 'Shin', 'Taw', 'Tet', 'Tsadi-final', 'Tsadi-medial', 'Waw', 'Yod', 'Zayin']
+nc: 27
+path: data/
+train: 'images/train'
+val: 'images/val'
+test: 'images/test'
+ 
+# # class names
+# names: 
+#   0: 'pothole'
