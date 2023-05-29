@@ -203,21 +203,23 @@ def stitch(images, text, folder, script_name):
     x_offset = PADDING * np.random.randint(1, 4, size=1)[0]
     start_offset = x_offset
     y_offset = PADDING * np.random.randint(1, 2, size=1)[0]
-    line_calc=0
+    line_calc = 0
     col_calc = 0
 
     for idx, im in enumerate(images_type):
         if im.size[0] > 1 and im.size[1] > 1:
             col_calc += 1
-            #im = im.resize((int(im.size[0] / 2), int(im.size[1] / 2)))
-            im = im.resize((int(im.size[0]/2), int(im.size[1] / 2)))
+            # im = im.resize((int(im.size[0] / 2), int(im.size[1] / 2)))
+            im = im.resize((int(im.size[0] / 2), int(im.size[1] / 2)))
         if new_im.size[0] - (x_offset + im.size[0]) <= start_offset:
-            line_calc+=1
-            print('col calc', col_calc)
+            line_calc += 1
+            print('col calc', np.abs(col_calc-(len(images_type)-idx)))
+            #if np.abs(col_calc-(len(images_type)-idx))<=int(len(images_type)/2):
+
             print('line calc', line_calc)
             col_calc = 0
-            #y_offset = y_offset + int(max_height / 2)
-            y_offset = y_offset + int(max_height/2)
+            # y_offset = y_offset + int(max_height / 2)
+            y_offset = y_offset + int(max_height / 2)
             x_offset = start_offset
         else:
             #  CHANGE Y OFFSET BASED ON (NEW_IMG.HEIGTH - IM.HEIGTH) / 2
@@ -399,7 +401,7 @@ def generate_sample(folder, script_name, text_length=TEXT_LENGTH):
     '''   for im in script:
         if im.shape[0]>20:'''
 
-    #script = rotate_several_by_degree([im for im in script if im.shape[0] > 20])
+    # script = rotate_several_by_degree([im for im in script if im.shape[0] > 20])
 
     stitch(script, text, folder, script_name)
 
