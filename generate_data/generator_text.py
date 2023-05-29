@@ -13,7 +13,7 @@ import imgaug.augmenters as iaa
 from Augmentation.LineAugmentation import rotate_several_by_degree
 
 # should be based on N-gram probability distribution
-#FOLDER = 'train'
+# FOLDER = 'train'
 FOLDER = 'output'
 WORD_LENGTH = 10
 TEXT_LENGTH = 100 * np.random.randint(1, 5, size=1)[0]
@@ -27,7 +27,7 @@ PADDING = 10 * np.random.randint(10, size=1)[0]
 WHITESPACE = 15
 PATH = os.getcwd()
 SCRIPT_NAME = 'test3'
-#LETTERS_FOLDER = os.path.join('C:/Users/admin/Documents/Uni/Master/4.Sem/HWR', 'symbols')
+# LETTERS_FOLDER = os.path.join('C:/Users/admin/Documents/Uni/Master/4.Sem/HWR', 'symbols')
 
 # LETTERS_FOLDER = '../data/preprocessed_images/symbols'
 SCRIPT_NAME = 'test'
@@ -103,7 +103,7 @@ def save_coco_label(file: str, label_class: str, points: Box, path: str, folder:
     label_class = labels[label_class]
     label = '{} {} {} {} {}'.format(label_class, x_c, y_c, w, h).replace('"', '')
     file = str(file) + '.txt'
-    #with open(os.path.join(DATA_FOLDER, "labels", folder, str(file)), 'a') as f:
+    # with open(os.path.join(DATA_FOLDER, "labels", folder, str(file)), 'a') as f:
     with open(os.path.join("labels", str(file)), 'a') as f:
         f.write(label)
         f.write("\n")
@@ -203,11 +203,21 @@ def stitch(images, text, folder, script_name):
     x_offset = PADDING * np.random.randint(1, 4, size=1)[0]
     start_offset = x_offset
     y_offset = PADDING * np.random.randint(1, 2, size=1)[0]
+    line_calc=0
+    col_calc = 0
+
     for idx, im in enumerate(images_type):
         if im.size[0] > 1 and im.size[1] > 1:
-            im = im.resize((int(im.size[0] / 2), int(im.size[1] / 2)))
+            col_calc += 1
+            #im = im.resize((int(im.size[0] / 2), int(im.size[1] / 2)))
+            im = im.resize((int(im.size[0]/2), int(im.size[1] / 2)))
         if new_im.size[0] - (x_offset + im.size[0]) <= start_offset:
-            y_offset = y_offset + int(max_height / 2)
+            line_calc+=1
+            print('col calc', col_calc)
+            print('line calc', line_calc)
+            col_calc = 0
+            #y_offset = y_offset + int(max_height / 2)
+            y_offset = y_offset + int(max_height/2)
             x_offset = start_offset
         else:
             #  CHANGE Y OFFSET BASED ON (NEW_IMG.HEIGTH - IM.HEIGTH) / 2
@@ -225,7 +235,8 @@ def stitch(images, text, folder, script_name):
         w = w / WIDTH
         h = h / HEIGHT
         box = [x_c, y_c, w, h]
-        label = text[idx]
+        # label = text[idx]
+        label = text[idx if idx <= 0 else idx - 1]
         # skip punctuations, do not save their labels, yolo should not learn them
         if label not in string.punctuation:
             save_coco_label(script_name, label, box, PATH, folder)
@@ -240,8 +251,8 @@ def stitch(images, text, folder, script_name):
     new_im = transform_scroll(new_im)
 
     new_im.save(
-        #os.path.join(DATA_FOLDER, 'images', folder, script_name + '.png'))
-        os.path.join('datasets','images',script_name + '.png'))
+        # os.path.join(DATA_FOLDER, 'images', folder, script_name + '.png'))
+        os.path.join('datasets', 'images', script_name + '.png'))
 
 
 def get_random_param_values():
@@ -340,11 +351,11 @@ def sample_text_generator(text_len, ngram_size):
     Parameters
     ----------
     """
-    class_names=[]
+    class_names = []
     for path in glob(f'{LETTERS_FOLDER}/*/'):
         class_names.append(path)
 
-    #class_names = glob(LETTERS_FOLDER + os.sep + "*", recursive=False)
+    # class_names = glob(LETTERS_FOLDER + os.sep + "*", recursive=False)
     images = load_classes(class_names)
     text = generator(text_len, ngram_size)
 
@@ -354,10 +365,10 @@ def sample_text_generator(text_len, ngram_size):
 
     # set the parameters for the image augmentation
     params = get_random_param_values()
-    for idx,letter in enumerate(text):
+    for idx, letter in enumerate(text):
         if letter not in string.punctuation and letter != '':
             random_sample_idx = np.random.choice(len(images[letter]), 1)[0]
-            random_param=np.random.random_sample()
+            random_param = np.random.random_sample()
             if random_param < 0.5:
                 random_sample = create_image(letter, (64, 69)).convert('1')
                 random_sample = np.array(random_sample)
@@ -372,7 +383,7 @@ def sample_text_generator(text_len, ngram_size):
             end_token.fill(255)
             random_sample = end_token
         script.append(random_sample)
-    #script = np.array(script)
+    # script = np.array(script)
     return script, text
 
 
@@ -383,9 +394,12 @@ def generate_sample(folder, script_name, text_length=TEXT_LENGTH):
     script, text = sample_text_generator(text_length, NGRAM_SIZE)
 
     # THIS IS VYVY'S PART
-    for im in script:
-            print(im.shape)
-    script=rotate_several_by_degree([im for im in script if im.shape[0] > 20])
+    # for im in script:
+    #       print(im.shape)
+    '''   for im in script:
+        if im.shape[0]>20:'''
+
+    #script = rotate_several_by_degree([im for im in script if im.shape[0] > 20])
 
     stitch(script, text, folder, script_name)
 

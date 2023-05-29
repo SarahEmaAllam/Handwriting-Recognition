@@ -27,7 +27,7 @@ def gen_random_img_list(path, list_len):
 
 def rotate_by_degree(img_list):
     nr = len(img_list)
-    print('listlänge', nr)
+    #print('listlänge', nr)
     degree_diff = 90 / (nr - 1) if nr > 1 else nr
     degree_start = -degree_diff
     degree_end = 0
@@ -47,16 +47,16 @@ def rotate_several_by_degree(img_list):
         for i in range(0, n):
             yield l[i::n]
 
-    for img in img_list:
-        ia.imshow(image=img)
+    #for img in img_list:
+        #ia.imshow(image=img)
     nr_lines = random.choice((4, 1))
     final_img_list = []
     for line in range(nr_lines):
         rand_chunks = chunks(img_list, nr_lines)
         for chunk in rand_chunks:
-            ia.imshow(np.hstack(chunk))
+            #ia.imshow(np.hstack(chunk))
             aug_rand_sample = rotate_by_degree(chunk)
-            ia.imshow(np.hstack(aug_rand_sample))
+            #ia.imshow(np.hstack(aug_rand_sample))
             final_img_list += aug_rand_sample
     return final_img_list
 
