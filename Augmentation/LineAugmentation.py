@@ -6,7 +6,7 @@ import imageio.v2 as iio
 import imgaug.augmenters as iaa
 import cv2
 import albumentations as A
-from wezel.main import assert_dir
+#from wezel.main import assert_dir
 from PIL import Image
 import os
 
@@ -35,8 +35,6 @@ def rotate_by_degree(img_list):
     for img in img_list:
         rotate = iaa.Affine(rotate=(degree_start, degree_end), mode='constant')
         image_aug = rotate(image=img)
-        print('start', degree_start)
-        print('end', degree_end)
         degree_start = degree_end
         degree_end += degree_diff
         aug_img_list.append(image_aug)

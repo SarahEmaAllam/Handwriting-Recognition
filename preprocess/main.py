@@ -38,11 +38,12 @@ def remove_components(labelsize, edgelabels, labels, img, sizelimit):
 
 
 def crop_clean_symbols(inputdir, outputdir):
-
     max_width = 0
     max_height = 0
 
     for (subdir, _, files) in os.walk(inputdir):
+        if os.path.basename(subdir) != '__MACOSX' or os.path.basename(subdir) != 'image-data':
+            continue
         print("Start crop clean: " + os.path.basename(subdir))
         fulloutpath = outputdir + "/" + os.path.basename(subdir) + "/"
 
@@ -76,7 +77,8 @@ def crop_clean_symbols(inputdir, outputdir):
             max_height = max(max_height, height)
 
             cropped_thresholded = cv2.threshold(cropped_img, 200, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_BINARY)[1]
-            cropped_amount, cropped_labels, cropped_stats, _ = cv2.connectedComponentsWithStats(cropped_thresholded, 4, cv2.CV_32S)
+            cropped_amount, cropped_labels, cropped_stats, _ = cv2.connectedComponentsWithStats(cropped_thresholded, 4,
+                                                                                                cv2.CV_32S)
             if cropped_amount > 2:
                 label_size = cropped_stats[:, cv2.CC_STAT_AREA]
                 edge_labels = detect_on_edge(cropped_labels, cropped_amount)
@@ -90,8 +92,9 @@ def crop_clean_symbols(inputdir, outputdir):
 
 
 def rescale_images(imgdir, max_width, max_height):
-
     for (subdir, _, files) in os.walk(imgdir):
+        if os.path.basename(subdir) != '__MACOSX' or os.path.basename(subdir) != 'image-data':
+            continue
         print("Start rescaling: " + os.path.basename(subdir))
         for file in files:
             if not is_image_file(file):
@@ -112,7 +115,6 @@ def rescale_images(imgdir, max_width, max_height):
 
 
 def pre_processing(inputdir, outputdir):
-
     kernel = np.ones((6, 6), np.uint8)
 
     for file in os.listdir(inputdir):
@@ -166,7 +168,3 @@ if __name__ == '__main__':
     print("Starting processing scrolls.")
     pre_processing(sourcescollsdir, scrollsdir)
     print("Finished processing scrolls.")
-
-
-
-

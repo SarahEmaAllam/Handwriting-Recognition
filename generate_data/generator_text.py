@@ -4,15 +4,17 @@ import os
 import numpy as np
 from glob import glob
 from PIL import Image, ImageOps
-from .text_generator_ngram import generator
+
+from generate_data.generator_data import create_image
+from generate_data.text_generator_ngram import generator
 from typing import Union, Tuple
 import string
 import imgaug.augmenters as iaa
-from .generator_data import create_image
-from .LineAugmentation import rotate
+from Augmentation.LineAugmentation import rotate_several_by_degree
 
 # should be based on N-gram probability distribution
-FOLDER = 'train'
+#FOLDER = 'train'
+FOLDER = 'output'
 WORD_LENGTH = 10
 TEXT_LENGTH = 100 * np.random.randint(1, 5, size=1)[0]
 # text_len = 10
@@ -24,38 +26,41 @@ HEIGHT = 640
 PADDING = 10 * np.random.randint(10, size=1)[0]
 WHITESPACE = 15
 PATH = os.getcwd()
+SCRIPT_NAME = 'test3'
+#LETTERS_FOLDER = os.path.join('C:/Users/admin/Documents/Uni/Master/4.Sem/HWR', 'symbols')
+
+# LETTERS_FOLDER = '../data/preprocessed_images/symbols'
 SCRIPT_NAME = 'test'
-# LETTERS_FOLDER = os.path.join('preprocess', 'output', 'symbols')
+LETTERS_FOLDER = os.path.join('..\preprocess', 'output', 'symbols')
 
 DATA_FOLDER = 'datasets'
-LETTERS_FOLDER = os.path.join('preprocess', 'output', 'symbols')
-labels = {  'Alef': 0, 
-  'Ayin': 1, 
-  'Bet': 2, 
-  'Dalet': 3, 
-  'Gimel': 4, 
-  'He': 5, 
-  'Het':6, 
-  'Kaf':7, 
-  'Kaf-final':8, 
-  'Lamed':9, 
-  'Mem':10, 
-  'Mem-medial':11, 
-  'Nun-final':12, 
-  'Nun-medial':13, 
-  'Pe':14, 
-  'Pe-final':15, 
-  'Qof':16, 
-  'Resh':17, 
-  'Samekh':18, 
-  'Shin':19, 
-  'Taw':20, 
-  'Tet':21, 
-  'Tsadi-final':22, 
-  'Tsadi-medial':23, 
-  'Waw':24, 
-  'Yod':25, 
-  'Zayin':26}
+labels = {'Alef': 0,
+          'Ayin': 1,
+          'Bet': 2,
+          'Dalet': 3,
+          'Gimel': 4,
+          'He': 5,
+          'Het': 6,
+          'Kaf': 7,
+          'Kaf-final': 8,
+          'Lamed': 9,
+          'Mem': 10,
+          'Mem-medial': 11,
+          'Nun-final': 12,
+          'Nun-medial': 13,
+          'Pe': 14,
+          'Pe-final': 15,
+          'Qof': 16,
+          'Resh': 17,
+          'Samekh': 18,
+          'Shin': 19,
+          'Taw': 20,
+          'Tet': 21,
+          'Tsadi-final': 22,
+          'Tsadi-medial': 23,
+          'Waw': 24,
+          'Yod': 25,
+          'Zayin': 26}
 
 
 def resize_data(image: Image.Image, width: int, height: int) -> Tuple[
@@ -96,10 +101,10 @@ def save_coco_label(file: str, label_class: str, points: Box, path: str, folder:
     w = points[2]
     h = points[3]
     label_class = labels[label_class]
-    print("LABEL :", label_class)
     label = '{} {} {} {} {}'.format(label_class, x_c, y_c, w, h).replace('"', '')
     file = str(file) + '.txt'
-    with open(os.path.join(DATA_FOLDER, "labels", folder, str(file)), 'a') as f:
+    #with open(os.path.join(DATA_FOLDER, "labels", folder, str(file)), 'a') as f:
+    with open(os.path.join("labels", str(file)), 'a') as f:
         f.write(label)
         f.write("\n")
         f.close()
@@ -189,7 +194,6 @@ def stitch(images, text, folder, script_name):
     """
     images_type = []
     for i in images:
-
         i = Image.fromarray(i)
         images_type.append(i)
     widths, heights = zip(*(i.size for i in images_type))
@@ -236,7 +240,8 @@ def stitch(images, text, folder, script_name):
     new_im = transform_scroll(new_im)
 
     new_im.save(
-        os.path.join(DATA_FOLDER, 'images', folder, script_name + '.png'))
+        #os.path.join(DATA_FOLDER, 'images', folder, script_name + '.png'))
+        os.path.join('datasets','images',script_name + '.png'))
 
 
 def get_random_param_values():
@@ -335,7 +340,11 @@ def sample_text_generator(text_len, ngram_size):
     Parameters
     ----------
     """
-    class_names = glob(LETTERS_FOLDER + os.sep + "*", recursive=False)
+    class_names=[]
+    for path in glob(f'{LETTERS_FOLDER}/*/'):
+        class_names.append(path)
+
+    #class_names = glob(LETTERS_FOLDER + os.sep + "*", recursive=False)
     images = load_classes(class_names)
     text = generator(text_len, ngram_size)
 
@@ -345,12 +354,11 @@ def sample_text_generator(text_len, ngram_size):
 
     # set the parameters for the image augmentation
     params = get_random_param_values()
-
-    for letter in text:
+    for idx,letter in enumerate(text):
         if letter not in string.punctuation and letter != '':
             random_sample_idx = np.random.choice(len(images[letter]), 1)[0]
-
-            if np.random.random_sample() < 0.5:
+            random_param=np.random.random_sample()
+            if random_param < 0.5:
                 random_sample = create_image(letter, (64, 69)).convert('1')
                 random_sample = np.array(random_sample)
             else:
@@ -363,24 +371,21 @@ def sample_text_generator(text_len, ngram_size):
                 dtype=np.uint8)
             end_token.fill(255)
             random_sample = end_token
-
         script.append(random_sample)
-
-    script = np.array(script)
+    #script = np.array(script)
     return script, text
 
 
 def generate_sample(folder, script_name, text_length=TEXT_LENGTH):
     class_names = glob(LETTERS_FOLDER + os.sep + "*", recursive=False)
-    print(class_names)
 
     # images = load_classes(class_names)
     script, text = sample_text_generator(text_length, NGRAM_SIZE)
 
     # THIS IS VYVY'S PART
-    # for im in script:
-    #     print(im.shape)
-    # rotate([im for im in script if im.shape[0] > 20])
+    for im in script:
+            print(im.shape)
+    script=rotate_several_by_degree([im for im in script if im.shape[0] > 20])
 
     stitch(script, text, folder, script_name)
 
@@ -388,7 +393,4 @@ def generate_sample(folder, script_name, text_length=TEXT_LENGTH):
 # for i in range(10):
 #     generate_sample(FOLDER, f"sample{i}_with_crop_and_cutout")
 
-# generate_sample(FOLDER, "test")
-
-
-
+generate_sample(FOLDER, "test")

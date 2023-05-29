@@ -36,7 +36,7 @@ def produce_data():
     for idx, iter in enumerate(range( VAL_SIZE)):
         TEXT_LENGTH = np.random.randint(1, 100*MAX_TXT_LENGTH, size=1)[0]
         generate_sample(FOLDER_VAL, SCRIPT_NAME + str(iter+TRAIN_SIZE+1), text_length=TEXT_LENGTH)
-    
+
     for idx, iter in enumerate(range( TEST_SIZE)):
         TEXT_LENGTH =  np.random.randint(1, 100*MAX_TXT_LENGTH, size=1)[0]
         generate_sample(FOLDER_TEST, SCRIPT_NAME + str(iter+TRAIN_SIZE+ VAL_SIZE + 1), text_length=TEXT_LENGTH)
@@ -95,11 +95,11 @@ def results():
 def train_model(trial):
     # Load a pretrained YOLO model (recommended for training)
     model = YOLO('yolov8n.pt')
-  
+
     cfg = { 'train_batch_size' : 32,
             'test_batch_size' : 32,
             'n_epochs' : 200,
-            'lr'       : trial.suggest_loguniform('lr', 1e-3, 1e-2),          
+            'lr'       : trial.suggest_loguniform('lr', 1e-3, 1e-2),
             'momentum' : trial.suggest_uniform('momentum', 0.4, 0.99),
             'optimizer': trial.suggest_categorical('optimizer', ['RMSProp', 'Adam']),
             'cos_lr': trial.suggest_categorical('cos_lr', [True, False]),
@@ -125,7 +125,7 @@ def train_model(trial):
 
     print("TRAINING RESULTS: ", results)
     # results = model.predict(conf = conf, iou = iou, save_crop=True, max_det = MAX_TXT_LENGTH * 100, )  # evaluate model performance on the test data set
-    
+
     metrics = model.val(data='config.yaml', save_json=True, iou=cfg['iou'])  # no arguments needed, dataset and settings remembered
     # metrics.box.map    # map50-95
     # metrics.box.map50  # map50
