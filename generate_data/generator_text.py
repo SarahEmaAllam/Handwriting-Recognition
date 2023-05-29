@@ -210,6 +210,8 @@ def stitch(images, text, folder, script_name):
             y_offset = y_offset
             # (x_offset, 0) = upper left corner of the canvas where to paste
         # cropping = np.random.randint(5, 8, size=1)[0]
+        if y_offset >= HEIGHT:
+            break
         cropping = np.random.randint(5, 6, size=1)[0]
         if im.size[0] > 10:
             im = im.crop((cropping, 0, im.size[0] - cropping, im.size[1]))
