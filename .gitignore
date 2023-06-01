@@ -1,5 +1,7 @@
 # Images data folder
 data/
+IAM-data/
+boxes/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

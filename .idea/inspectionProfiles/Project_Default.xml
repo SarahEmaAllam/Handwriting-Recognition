@@ -5,21 +5,8 @@
     <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoredPackages">
         <value>
-          <list size="14">
-            <item index="0" class="java.lang.String" itemvalue="pyarrow" />
-            <item index="1" class="java.lang.String" itemvalue="pywin32" />
-            <item index="2" class="java.lang.String" itemvalue="seaborn" />
-            <item index="3" class="java.lang.String" itemvalue="netCDF4" />
-            <item index="4" class="java.lang.String" itemvalue="PyQt5" />
-            <item index="5" class="java.lang.String" itemvalue="Shapely" />
-            <item index="6" class="java.lang.String" itemvalue="geopandas" />
-            <item index="7" class="java.lang.String" itemvalue="GDAL" />
-            <item index="8" class="java.lang.String" itemvalue="torchvision" />
-            <item index="9" class="java.lang.String" itemvalue="torchaudio" />
-            <item index="10" class="java.lang.String" itemvalue="certifi" />
-            <item index="11" class="java.lang.String" itemvalue="streamlit" />
-            <item index="12" class="java.lang.String" itemvalue="plotly" />
-            <item index="13" class="java.lang.String" itemvalue="apache-flink" />
+          <list size="1">
+            <item index="0" class="java.lang.String" itemvalue="dataclasses" />
           </list>
         </value>
       </option>
@@ -27,91 +14,6 @@
     <inspection_tool class="PyPep8Inspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="ignoredErrors">
         <list>
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
-          <option value="E501" />
-          <option value="W29" />
           <option value="E501" />
         </list>
       </option>
@@ -120,13 +22,7 @@
       <option name="ignoredErrors">
         <list>
           <option value="N806" />
-        </list>
-      </option>
-    </inspection_tool>
-    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="ignoredIdentifiers">
-        <list>
-          <option value="pm4py.objects.log.util.get_log_representation" />
+          <option value="N801" />
         </list>
       </option>
     </inspection_tool>

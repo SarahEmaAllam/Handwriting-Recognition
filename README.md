@@ -14,9 +14,13 @@ The dataset folder should contain the following files:
 
 3. Preprocessing the data - if you wish to preprocess the data, run the ```preprocessing/main.py``` file
 
-4. To generate training data, run the ```generate_data/generator_text.py``` file.
+4. To generate training data separately, you can run the ```generate_data/sample_generator.py``` file. However, 
+the ```model.py``` file already generates the training data, so you don't need to run the ```sample_generator.py``` file.
 
 Note: the ```ngrams_frequencies_withNames_fixed``` is already in the generate_data directory, so you don't need to run the fix.py file.
 
 Note2: you can see the character level augmentations in the Jupyter notebook ```andreea/char_aug.ipynb```  
 with several examples of how each transformation works.
+
+5. Ultimately, to run the model, run the ```model.py``` file. It generates the training data, 
+trains the model and tests it on the testing data.

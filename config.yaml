@@ -1,9 +1,10 @@
 # class names
 # names : ['Alef', 'Ayin', 'Bet', 'Dalet', 'Gimel', 'He', 'Het', 'Kaf', 'Kaf-final', 'Lamed', 'Mem', 'Mem-medial', 'Nun-final', 'Nun-medial', 'Pe', 'Pe-final', 'Qof', 'Resh', 'Samekh', 'Shin', 'Taw', 'Tet', 'Tsadi-final', 'Tsadi-medial', 'Waw', 'Yod', 'Zayin']
 nc: 27
-train: 'images/train'
-val: 'images/val'
-test: 'images/test'
+path: '../Handwriting-Recognition/data/images'
+train: 'train'
+val: 'val'
+test: 'test'
  
 # # class names
 names: 

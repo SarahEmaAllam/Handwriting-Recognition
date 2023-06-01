@@ -1,10 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="a45769a7-c94a-44c7-b747-eefd0fc58de7" name="Changes" comment="several lines augmentation works">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_19_05_2023_12_57__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_19_05_2023_12_57__Changes_.xml" afterDir="false" />
+    <list default="true" id="45952f45-4eee-4865-884c-d5cb7959b15e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/generate_data/sample_generator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Handwriting-Recognition.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Handwriting-Recognition.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_19_05_2023_12_57_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_19_05_2023_12_57__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Augmentation/LineAugmentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Augmentation/LineAugmentation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.~lock.Handwriting recognition.docx#" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/andreea/char_aug.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/andreea/char_aug.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/andreea/preprocessing.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/andreea/preprocessing.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/andreea/text_aug.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/andreea/text_aug.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/LineAugmentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/augmentation/line_augmentation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/fix.py" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/ngram/fix.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/generator_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/data_generator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/generator_text.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/labels/labels.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/labels/test.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/labels/test1.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/labels/test2.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/labels/test3.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/ngrams_frequencies_withNames_fixed.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/ngram/ngrams_frequencies_withNames_fixed.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/ngrams_frequencies_withNames_prob.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/ngram/ngrams_frequencies_withNames_prob.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/output/test.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/output/test1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/output/test2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/output/test3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/text_generator_ngram.py" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/ngram/text_generator_ngram.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,53 +47,48 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+        <option value="Jupyter Notebook" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="preprocessing" />
-      </map>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/Augmentation/LineAugmentation.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/wezel/main.py" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectId" id="2PvNqeLkOwA80nbfnwAXkMQFyM0" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectId" id="2PylElUgewzJuA3ou500reHEewk" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;//wsl$/Debian/home/vyvytn/Documents/hwr/Handwriting-Recognition/Augmentation/pics&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="\\wsl$\Debian\home\vyvytn\Documents\hwr\Handwriting-Recognition\Augmentation\pics" />
-      <recent name="\\wsl$\Debian\home\vyvytn\Documents\hwr\Handwriting-Recognition\Preprocessing" />
-      <recent name="\\wsl$\Debian\home\vyvytn\Documents\hwr\Handwriting-Recognition" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="\\wsl$\Debian\home\vyvytn\Documents\hwr\Handwriting-Recognition\Augmentation" />
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/yolo" />
+      <recent name="$PROJECT_DIR$/generate_data/augmentation" />
+      <recent name="$PROJECT_DIR$/generate_data/ngram" />
+      <recent name="$PROJECT_DIR$/data/labels/old" />
     </key>
   </component>
-  <component name="RunManager">
-    <configuration name="LineAugmentation" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python.model">
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Handwriting-Recognition" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -69,12 +96,34 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Augmentation" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/preprocess" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Augmentation/LineAugmentation.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/preprocess/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="model" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Handwriting-Recognition" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/model.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -85,72 +134,29 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.LineAugmentation" />
+        <item itemvalue="Python.model" />
+        <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="a45769a7-c94a-44c7-b747-eefd0fc58de7" name="Changes" comment="" />
-      <created>1684333788503</created>
+      <changelist id="45952f45-4eee-4865-884c-d5cb7959b15e" name="Changes" comment="" />
+      <created>1684437093110</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1684333788503</updated>
-      <workItem from="1684333792236" duration="2446000" />
-      <workItem from="1684349744884" duration="4180000" />
-      <workItem from="1684492865401" duration="948000" />
-      <workItem from="1684567287977" duration="852000" />
-      <workItem from="1684601813410" duration="6798000" />
-      <workItem from="1684748716592" duration="878000" />
+      <updated>1684437093110</updated>
+      <workItem from="1684437094618" duration="111946000" />
+      <workItem from="1685611666071" duration="2512000" />
     </task>
-    <task id="LOCAL-00001" summary="set up">
-      <created>1684492710564</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1684492710564</updated>
-    </task>
-    <task id="LOCAL-00002" summary="trying to read pgm into imgaug">
-      <created>1684506450552</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1684506450552</updated>
-    </task>
-    <task id="LOCAL-00003" summary="ignore idea dir">
-      <created>1684506623107</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1684506623107</updated>
-    </task>
-    <task id="LOCAL-00004" summary="ignore idea dir">
-      <created>1684506703933</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1684506703933</updated>
-    </task>
-    <task id="LOCAL-00005" summary="rotate list by degree working; also random batch of letters">
-      <created>1684603813748</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1684603813749</updated>
-    </task>
-    <task id="LOCAL-00006" summary="several lines augmentation works">
-      <created>1684607538273</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1684607538273</updated>
-    </task>
-    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="requirements.txt" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -163,16 +169,14 @@
       </map>
     </option>
   </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="set up" />
-    <MESSAGE value="trying to read pgm into imgaug" />
-    <MESSAGE value="ignore idea dir" />
-    <MESSAGE value="rotate list by degree working; also random batch of letters" />
-    <MESSAGE value="several lines augmentation works" />
-    <option name="LAST_COMMIT_MESSAGE" value="several lines augmentation works" />
-  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Handwriting_Recognition$main.coverage" NAME="main Coverage Results" MODIFIED="1684349805454" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/wezel" />
-    <SUITE FILE_PATH="coverage/Handwriting_Recognition$LineAugmentation.coverage" NAME="LineAugmentation Coverage Results" MODIFIED="1684749597954" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Augmentation" />
+    <SUITE FILE_PATH="coverage/Handwriting_Recognition$text_generator_ngram.coverage" NAME="text_generator_ngram Coverage Results" MODIFIED="1684673580717" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generate_data" />
+    <SUITE FILE_PATH="coverage/Handwriting_Recognition$helper_functions.coverage" NAME="helper_functions Coverage Results" MODIFIED="1685193943703" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generate_data" />
+    <SUITE FILE_PATH="coverage/Handwriting_Recognition$generator_data.coverage" NAME="generator_data Coverage Results" MODIFIED="1684607117006" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Handwriting_Recognition$main.coverage" NAME="main Coverage Results" MODIFIED="1684624397975" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/preprocess" />
+    <SUITE FILE_PATH="coverage/Handwriting_Recognition$model.coverage" NAME="model Coverage Results" MODIFIED="1685614115415" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Handwriting_Recognition$fix.coverage" NAME="fix Coverage Results" MODIFIED="1684624416711" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Handwriting_Recognition$sample_generator.coverage" NAME="sample_generator Coverage Results" MODIFIED="1685365601118" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generate_data" />
+    <SUITE FILE_PATH="coverage/Handwriting_Recognition$generator_text.coverage" NAME="generator_text Coverage Results" MODIFIED="1685009501450" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generate_data" />
   </component>
 </project>
