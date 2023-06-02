@@ -1,34 +1,13 @@
-import os
-from generate_data.sample_generator import generate_sample, DATA_FOLDER
-from ultralytics import YOLO
-import numpy as np
 import optuna
-# from sklearn.externals import joblib
 import joblib
-from optuna.visualization import plot_intermediate_values
+from ultralytics import YOLO
 from optuna.visualization import plot_optimization_history
 from optuna.visualization import plot_param_importances
 from optuna.visualization import plot_contour
-import matplotlib.pyplot as plt
-# from ultralytics.yolo.utils.metrics import ConfusionMatrix
-from pathlib import Path
 from tqdm import tqdm
-from generate_data.sample_generator import generate_sample, FOLDER
 from generate_data.helper_functions import remove_train_test_val
-
-TRAIN_SIZE = 6000
-VAL_SIZE = 3000
-TEST_SIZE = 1000
-FOLDER_TRAIN = 'train'
-FOLDER_VAL = 'val'
-FOLDER_TEST = 'test'
-SCRIPT_NAME = 'script-'
-DET_MODEL_NAME = "yolov8m"
-MAX_TXT_LENGTH = 5
-PATH = os.getcwd()
-
-
-# IMAGE_PATH = os.path.join(FOLDER, SCRIPT_NAME)
+from generate_data.sample_generator import generate_sample
+from global_params import *
 
 
 def produce_data():
@@ -37,21 +16,21 @@ def produce_data():
 
     # generate data and save them
     for idx, iter in tqdm(enumerate(range(TRAIN_SIZE)), desc="Generating training data"):
-        TEXT_LENGTH = np.random.randint(1, 100 * MAX_TXT_LENGTH, size=1)[0]
+        text_len = np.random.randint(1, 100 * MAX_TXT_LENGTH, size=1)[0]
         generate_sample(FOLDER_TRAIN, SCRIPT_NAME + str(iter),
-                        text_length=TEXT_LENGTH)
+                        text_length=text_len)
 
     # split into train and val
     for idx, iter in tqdm(enumerate(range(VAL_SIZE)), desc="Generating validation data"):
-        TEXT_LENGTH = np.random.randint(1, 100 * MAX_TXT_LENGTH, size=1)[0]
+        text_len = np.random.randint(1, 100 * MAX_TXT_LENGTH, size=1)[0]
         generate_sample(FOLDER_VAL, SCRIPT_NAME + str(iter + TRAIN_SIZE + 1),
-                        text_length=TEXT_LENGTH)
+                        text_length=text_len)
 
     for idx, iter in tqdm(enumerate(range(TEST_SIZE)), desc="Generating testing data"):
-        TEXT_LENGTH = np.random.randint(1, 100 * MAX_TXT_LENGTH, size=1)[0]
+        text_len = np.random.randint(1, 100 * MAX_TXT_LENGTH, size=1)[0]
         generate_sample(FOLDER_TEST,
                         SCRIPT_NAME + str(iter + TRAIN_SIZE + VAL_SIZE + 1),
-                        text_length=TEXT_LENGTH)
+                        text_length=text_len)
 
 
 def set_optuna_study():
@@ -68,8 +47,6 @@ def results():
     try:
         opt_history = plot_optimization_history(study)
         opt_history.write_image(os.path.join('studies', 'opt_history.png'))
-        # interm_values = plot_intermediate_values(study)
-        # opt_history.write_image(os.path.join('studies', 'opt_history.png'))
         contour = plot_contour(study)
         contour.write_image(os.path.join('studies', 'contour.png'))
         param_importance = plot_param_importances(study)
@@ -85,29 +62,6 @@ def results():
     print("  Params: ")
     for key, value in trial.params.items():
         print("    {}: {}".format(key, value))
-
-
-# But it's important to activate the option resume to train from the last state of that model (lr and other features).
-# An example could be:
-#
-# model = YOLO("last.pt")
-# results = model.train(epochs=200, save_period = 10, resume=True)
-
-# Create a new YOLO model from scratch
-# model = YOLO('yolov8s.yaml')
-
-
-# Train the model using the 'coco128.yaml' dataset for 3 epochs
-# results = model.train(data='coco128.yaml', epochs=3)
-
-# Evaluate the model's performance on the validation set
-# results = model.val()
-
-# Perform object detection on an image using the model
-# results = model('https://ultralytics.com/images/bus.jpg')
-
-# Export the model to ONNX format
-# success = model.export(format='onnx')
 
 
 def train_model(trial):
@@ -126,8 +80,7 @@ def train_model(trial):
            'save_period': 10,
            'iou': trial.suggest_uniform('iou', 0.5, 0.9), }
 
-    #   train_loader, test_loader = get_mnist_loaders(cfg['train_batch_size'], cfg['test_batch_size'])
-    # Training.
+    # Training
     results = model.train(
         data='config.yaml',
         imgsz=640,
@@ -144,33 +97,28 @@ def train_model(trial):
     )
 
     print("TRAINING RESULTS: ", results)
-    # results = model.predict(conf = conf, iou = iou, save_crop=True, max_det = MAX_TXT_LENGTH * 100, )  # evaluate model performance on the test data set
 
     metrics = model.val(data='../config.yaml', save_json=True, iou=cfg[
         'iou'])  # no arguments needed, dataset and settings remembered
-    # metrics.box.map    # map50-95
-    # metrics.box.map50  # map50
-    # metrics.box.map75  # map75
-    # metrics.box.maps   # a list contains map50-95 of each category
-    # success = YOLO("yolov8n.pt").export(format="onnx")  # export a model to ONNX
     print("TEST RESULTS: ", metrics)
     print(metrics.box.map)  # map50-95
     print("DICT: ", metrics.results_dict)
     print("mean_results() ", metrics.results_dict)
     print(type(metrics.results_dict))
     fitness = dict(metrics.results_dict)['fitness']
-    # metrics.box.map50  # map50
-    # metrics.box.map75  # map75
-    # metrics.box.maps   # a list contains map50-95 of each category
 
     return fitness
 
 
 if __name__ == '__main__':
-    # test data generation
+    # uncomment to test the data generation function (one sample)
     # generate_sample(FOLDER, "test")
 
-    # to run the model
+    # generate and split the data
     produce_data()
+
+    # train the model
     set_optuna_study()
+
+    # show the results
     results()

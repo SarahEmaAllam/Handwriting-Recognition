@@ -7,6 +7,23 @@
     <list default="true" id="45952f45-4eee-4865-884c-d5cb7959b15e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/datasets/labels/train.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/datasets/labels/val.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/augmentation/scroll_augmentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/augmentation/scroll_augmentation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/data_generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/data_generator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/helper_functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/helper_functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/ngram/fix.py" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/ngram/fix.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/ngram/text_generator_ngram.py" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/ngram/text_generator_ngram.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/sample_generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/sample_generator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/preprocess/preprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/preprocess/preprocessing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runs/detect/yolov8n_handwriting105/.args.yaml.icloud" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runs/detect/yolov8n_handwriting106/.args.yaml.icloud" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runs/detect/yolov8n_handwriting2/.args.yaml.icloud" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runs/detect/yolov8n_handwriting4/.args.yaml.icloud" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/runs/detect/yolov8n_handwriting5/.args.yaml.icloud" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,8 +33,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="Jupyter Notebook" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -121,7 +138,7 @@
       <workItem from="1684437094618" duration="111946000" />
       <workItem from="1685611666071" duration="7508000" />
       <workItem from="1685729438523" duration="845000" />
-      <workItem from="1685730310407" duration="528000" />
+      <workItem from="1685730310407" duration="3914000" />
     </task>
     <servers />
   </component>

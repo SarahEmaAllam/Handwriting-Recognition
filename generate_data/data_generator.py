@@ -1,10 +1,10 @@
 # Uses pillow (you can also use another imaging library if you want)
 from PIL import Image, ImageFont, ImageDraw
+from global_params import FONT_PATH
+
 
 # Load the font and set the font size to 42
-# font_path = 'venv/lib/python3.10/site-packages/PIL/Fonts/habbakuk/Habbakuk.TTF' #It's not here?
-font_path = 'Habbakuk.TTF'  # Linux is capital sensitive
-font = ImageFont.truetype(font_path, 42)
+font = ImageFont.truetype(FONT_PATH, 42)
 
 # Character mapping for each of the 27 tokens
 char_map = {'Alef': ')',

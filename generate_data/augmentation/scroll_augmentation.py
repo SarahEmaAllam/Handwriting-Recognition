@@ -1,4 +1,4 @@
-from .char_augmentation import *
+from generate_data.augmentation.char_augmentation import *
 
 
 def transform_scroll(image) -> Image:

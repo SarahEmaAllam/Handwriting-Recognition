@@ -7,35 +7,34 @@ import numpy as np
 from PIL import Image
 from typing import Tuple, List
 
-
 Box = List[float]
-labels = {  'Alef': 0,
-  'Ayin': 1,
-  'Bet': 2,
-  'Dalet': 3,
-  'Gimel': 4,
-  'He': 5,
-  'Het':6,
-  'Kaf':7,
-  'Kaf-final':8,
-  'Lamed':9,
-  'Mem':10,
-  'Mem-medial':11,
-  'Nun-final':12,
-  'Nun-medial':13,
-  'Pe':14,
-  'Pe-final':15,
-  'Qof':16,
-  'Resh':17,
-  'Samekh':18,
-  'Shin':19,
-  'Taw':20,
-  'Tet':21,
-  'Tsadi-final':22,
-  'Tsadi-medial':23,
-  'Waw':24,
-  'Yod':25,
-  'Zayin':26}
+labels = {'Alef': 0,
+          'Ayin': 1,
+          'Bet': 2,
+          'Dalet': 3,
+          'Gimel': 4,
+          'He': 5,
+          'Het': 6,
+          'Kaf': 7,
+          'Kaf-final': 8,
+          'Lamed': 9,
+          'Mem': 10,
+          'Mem-medial': 11,
+          'Nun-final': 12,
+          'Nun-medial': 13,
+          'Pe': 14,
+          'Pe-final': 15,
+          'Qof': 16,
+          'Resh': 17,
+          'Samekh': 18,
+          'Shin': 19,
+          'Taw': 20,
+          'Tet': 21,
+          'Tsadi-final': 22,
+          'Tsadi-medial': 23,
+          'Waw': 24,
+          'Yod': 25,
+          'Zayin': 26}
 
 
 def resize_data(image: Image.Image, width: int, height: int) -> Tuple[
@@ -77,7 +76,6 @@ def save_coco_label(file: str, label_class: str, points: Box, data_folder: str,
     w = points[2]
     h = points[3]
     label_class = labels[label_class]
-    print("LABEL :", label_class)
     label = '{} {} {} {} {}'.format(label_class, x_c, y_c, w, h).replace('"', '')
     file = str(file) + '.txt'
     with open(os.path.join(data_folder, "labels", folder, str(file)), 'a') as f:

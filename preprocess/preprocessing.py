@@ -1,13 +1,12 @@
 import os
 import cv2
 import numpy as np
+from global_params import SOURCE_SYMBOLS, SOURCE_SCROLLS, OUTPUT
 
-SOURCE_SYMBOLS = "source/symbols"
-SOURCE_SCROLLS = "source/scrolls"
-OUTPUT = "preprocess/output"
 
 def is_image_file(filename):
-    return filename.lower().endswith(('.png', '.jpg', '.jpeg', '.tif', '.tiff', '.bmp', '.gif', 'pmg'))
+    return filename.lower().endswith(
+        ('.png', '.jpg', '.jpeg', '.tif', '.tiff', '.bmp', '.gif', 'pmg'))
 
 
 def detect_on_edge(labels, amount):
@@ -41,7 +40,6 @@ def remove_components(labelsize, edgelabels, labels, img, sizelimit):
 
 
 def crop_clean_symbols(inputdir, outputdir):
-
     max_width = 0
     max_height = 0
 
@@ -57,12 +55,16 @@ def crop_clean_symbols(inputdir, outputdir):
             filepath = os.path.join(subdir, file)
             srcimage = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
             blurred = cv2.GaussianBlur(srcimage, (3, 3), 0)
-            thresholded = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
-            amount, labels, stats, _ = cv2.connectedComponentsWithStats(thresholded, 4, cv2.CV_32S)
+            thresholded = cv2.threshold(blurred, 0, 255,
+                                        cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[
+                1]
+            amount, labels, stats, _ = cv2.connectedComponentsWithStats(
+                thresholded, 4, cv2.CV_32S)
             largest_label = 1
             if amount > 2:
                 for label in range(1, amount):
-                    if stats[largest_label, cv2.CC_STAT_AREA] < stats[label, cv2.CC_STAT_AREA]:
+                    if stats[largest_label, cv2.CC_STAT_AREA] < stats[
+                        label, cv2.CC_STAT_AREA]:
                         largest_label = label
 
             largest_component = stats[largest_label]
@@ -78,12 +80,17 @@ def crop_clean_symbols(inputdir, outputdir):
             max_width = max(max_width, width)
             max_height = max(max_height, height)
 
-            cropped_thresholded = cv2.threshold(cropped_img, 200, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_BINARY)[1]
-            cropped_amount, cropped_labels, cropped_stats, _ = cv2.connectedComponentsWithStats(cropped_thresholded, 4, cv2.CV_32S)
+            cropped_thresholded = cv2.threshold(cropped_img, 200, 255,
+                                                cv2.THRESH_BINARY_INV | cv2.THRESH_BINARY)[
+                1]
+            cropped_amount, cropped_labels, cropped_stats, _ = cv2.connectedComponentsWithStats(
+                cropped_thresholded, 4, cv2.CV_32S)
             if cropped_amount > 2:
                 label_size = cropped_stats[:, cv2.CC_STAT_AREA]
                 edge_labels = detect_on_edge(cropped_labels, cropped_amount)
-                cropped_img = remove_components(label_size, edge_labels, cropped_labels, cropped_img, 200)
+                cropped_img = remove_components(label_size, edge_labels,
+                                                cropped_labels, cropped_img,
+                                                200)
 
             cv2.imwrite(fulloutpath + file, cropped_img)
 
@@ -93,7 +100,6 @@ def crop_clean_symbols(inputdir, outputdir):
 
 
 def rescale_images(imgdir, max_width, max_height):
-
     for (subdir, _, files) in os.walk(imgdir):
         print("Start rescaling: " + os.path.basename(subdir))
         for file in files:
@@ -114,16 +120,17 @@ def rescale_images(imgdir, max_width, max_height):
         print("Finished rescaling: " + os.path.basename(subdir))
 
 
-def pre_processing(inputdir, outputdir):
-
+def pre_processing(input_dir, output_dir):
     kernel = np.ones((6, 6), np.uint8)
 
-    for file in os.listdir(inputdir):
-        filepath = os.path.join(inputdir, file)
+    for file in os.listdir(input_dir):
+        filepath = os.path.join(input_dir, file)
         if "binarized" in file:
             print("Start cleaning: " + file)
             srcimg = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
-            thresholded = cv2.threshold(srcimg, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
+            thresholded = cv2.threshold(srcimg, 0, 255,
+                                        cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[
+                1]
             opening = cv2.morphologyEx(thresholded, cv2.MORPH_OPEN, kernel)
             closing = cv2.morphologyEx(thresholded, cv2.MORPH_CLOSE, kernel)
 
@@ -138,7 +145,7 @@ def pre_processing(inputdir, outputdir):
                 if closedifference[iy][ix]:
                     outputimg[iy][ix] = 0
 
-            cv2.imwrite(outputdir + "/" + file[0:-14] + ".pgm", outputimg)
+            cv2.imwrite(output_dir + "/" + file[0:-14] + ".pgm", outputimg)
             print("Finished cleaning: " + file)
 
 
@@ -148,28 +155,24 @@ def assert_dir(assrtdir):
 
 
 if __name__ == '__main__':
-    sourcesymboldir = SOURCE_SYMBOLS # input("give the folder of the train data:")
-    sourcescollsdir = SOURCE_SCROLLS # input("give the folder of the scrolls data:")
-    outputdir = OUTPUT # input("give the output folder:")
+    source_symbol_dir = SOURCE_SYMBOLS  # input("give the folder of the train data:")
+    source_scrolls_dir = SOURCE_SCROLLS  # input("give the folder of the scrolls data:")
+    output_dir = OUTPUT  # input("give the output folder:")
 
-    assert_dir(outputdir)
+    assert_dir(output_dir)
 
-    symbolsdir = outputdir + "/symbols/"
-    assert_dir(symbolsdir)
+    symbols_dir = output_dir + "/symbols/"
+    assert_dir(symbols_dir)
 
-    scrollsdir = outputdir + "/scrolls/"
-    assert_dir(scrollsdir)
+    scrolls_dir = output_dir + "/scrolls/"
+    assert_dir(scrolls_dir)
 
     print("Starting cropping and cleaning process.")
-    maxWidth, maxHeight = crop_clean_symbols(sourcesymboldir, symbolsdir)
+    maxWidth, maxHeight = crop_clean_symbols(source_symbol_dir, symbols_dir)
     print("Finished cropping and cleaning process")
     print("starting rescaling process")
-    rescale_images(outputdir, maxWidth, maxHeight)
+    rescale_images(output_dir, maxWidth, maxHeight)
 
     print("Starting processing scrolls.")
-    pre_processing(sourcescollsdir, scrollsdir)
+    pre_processing(source_scrolls_dir, scrolls_dir)
     print("Finished processing scrolls.")
-
-
-
-

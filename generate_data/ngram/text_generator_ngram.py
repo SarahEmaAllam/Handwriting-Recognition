@@ -7,11 +7,7 @@ import pandas as pd
 import os
 from pathlib import Path
 from generate_data.data_generator import char_map
-
-
-# note: os.getcwd() returns the path to where the file is being run from,
-# not the path to the current file. So we need to add the ngram folder to the path
-PATH = Path(__file__).parent.absolute()
+from global_params import N_GRAM_PATH
 
 
 def tokenize(text: str) -> List[str]:
@@ -150,29 +146,30 @@ def create_ngram_model(n, path):
     return m, posterior_prob
 
 
-def generator(text_length, ngram_size):
+def generator(text_length, ngram_size, print_text=False):
     start = time.time()
-    m, posterior_prob = create_ngram_model(
-        ngram_size, os.path.join(PATH, 'ngrams_frequencies_withNames_prob.xlsx'))
 
-    # print(f'Language Model creating time: {time.time() - start}')
-    # print(f'{"=" * 50}\nGenerated text:')
+    n_gram_freq_path = os.path.join(
+        N_GRAM_PATH, 'ngrams_frequencies_withNames_prob.xlsx')
+    m, posterior_prob = create_ngram_model(ngram_size, n_gram_freq_path)
     text = m.generate_text(text_length)
-    # print("TEXT")
-    # print(text)
-    # prev = " "
-    # for letter in text.split():
-    #     if prev == ".":
-    #         print(" ", end="")
-    #     prev = letter
-    #     if letter in char_map:
-    #         print(char_map[letter], end="")
-    #     else:
-    #         print(letter, end="")
-    #
-    # print("\n")
-    # print(f'{"=" * 50}')
-    return text
 
-# call generator
-# generator(1000, 4)
+    if print_text:
+        print(f'\nLanguage Model creating time: {time.time() - start}')
+        print(f'{"=" * 50}\nGenerated text:')
+        print("TEXT")
+        print(text)
+        prev = " "
+        for letter in text.split():
+            if prev == ".":
+                print(" ", end="")
+            prev = letter
+            if letter in char_map:
+                print(char_map[letter], end="")
+            else:
+                print(letter, end="")
+
+        print("\n")
+        print(f'{"=" * 50}')
+
+    return text

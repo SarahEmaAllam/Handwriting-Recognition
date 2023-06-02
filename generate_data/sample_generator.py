@@ -5,25 +5,7 @@ from generate_data.data_generator import create_image
 from generate_data.helper_functions import *
 from generate_data.augmentation.scroll_augmentation import *
 from generate_data.augmentation.line_augmentation import *
-
-# should be based on N-gram probability distribution
-FOLDER = 'new'
-WORD_LENGTH = 10
-TEXT_LENGTH = 100 * np.random.randint(1, 5, size=1)[0]
-# text_len = 10
-# SCRIPT_SIZE = 608
-NGRAM_SIZE = 4
-Box = [float, float, float, float]
-WIDTH = 640
-HEIGHT = 640
-PADDING = 10 * np.random.randint(10, size=1)[0]
-WHITESPACE = 15
-PATH = os.getcwd()
-SCRIPT_NAME = 'test2'
-# LETTERS_FOLDER = os.path.join('preprocess', 'output', 'symbols')
-
-DATA_FOLDER = 'data'
-LETTERS_FOLDER = 'data/preprocessed_images/symbols'
+from global_params import *
 
 
 def stitch(images, text, folder, script_name):
@@ -138,11 +120,6 @@ def sample_text_generator(text_len, ngram_size):
 
 
 def generate_sample(folder, script_name, text_length=TEXT_LENGTH):
-    # print("\nGenerating sample: ", script_name)
-    class_names = glob(LETTERS_FOLDER + os.sep + "*", recursive=False)
-    # print(class_names)
-
-    # images = load_classes(class_names)
     script, text = sample_text_generator(text_length, NGRAM_SIZE)
 
     # THIS IS VYVY'S PART
@@ -151,12 +128,5 @@ def generate_sample(folder, script_name, text_length=TEXT_LENGTH):
     # rotate([im for im in script if im.shape[0] > 20])
 
     stitch(script, text, folder, script_name)
-
-
-# for i in range(10):
-#     generate_sample(FOLDER, f"sample{i}")
-
-# generate_sample(FOLDER, "test")
-
 
 
