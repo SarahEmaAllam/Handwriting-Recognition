@@ -16,12 +16,9 @@ from tqdm import tqdm
 from generate_data.sample_generator import generate_sample, FOLDER
 from generate_data.helper_functions import remove_train_test_val
 
-TRAIN_SIZE = 6
-VAL_SIZE = 3
-TEST_SIZE = 1
-# TRAIN_SIZE = 6000
-# VAL_SIZE = 3000
-# TEST_SIZE = 1000
+TRAIN_SIZE = 6000
+VAL_SIZE = 3000
+TEST_SIZE = 1000
 FOLDER_TRAIN = 'train'
 FOLDER_VAL = 'val'
 FOLDER_TEST = 'test'
@@ -170,8 +167,10 @@ def train_model(trial):
 
 
 if __name__ == '__main__':
-    remove_train_test_val(DATA_FOLDER)
+    # test data generation
     # generate_sample(FOLDER, "test")
-    # produce_data()
-    # set_optuna_study()
-    # results()
+
+    # to run the model
+    produce_data()
+    set_optuna_study()
+    results()
