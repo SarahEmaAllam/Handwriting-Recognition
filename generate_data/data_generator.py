@@ -2,8 +2,8 @@
 from PIL import Image, ImageFont, ImageDraw
 
 # Load the font and set the font size to 42
-font_path = 'venv/lib/python3.10/site-packages/PIL/Fonts/habbakuk/Habbakuk.ttf'
-# font_path = 'Habbakuk.ttf'
+# font_path = 'venv/lib/python3.10/site-packages/PIL/Fonts/habbakuk/Habbakuk.TTF' #It's not here?
+font_path = 'Habbakuk.TTF'  # Linux is capital sensitive
 font = ImageFont.truetype(font_path, 42)
 
 # Character mapping for each of the 27 tokens
