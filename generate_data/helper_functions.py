@@ -9,6 +9,33 @@ from typing import Tuple, List
 
 
 Box = List[float]
+labels = {  'Alef': 0,
+  'Ayin': 1,
+  'Bet': 2,
+  'Dalet': 3,
+  'Gimel': 4,
+  'He': 5,
+  'Het':6,
+  'Kaf':7,
+  'Kaf-final':8,
+  'Lamed':9,
+  'Mem':10,
+  'Mem-medial':11,
+  'Nun-final':12,
+  'Nun-medial':13,
+  'Pe':14,
+  'Pe-final':15,
+  'Qof':16,
+  'Resh':17,
+  'Samekh':18,
+  'Shin':19,
+  'Taw':20,
+  'Tet':21,
+  'Tsadi-final':22,
+  'Tsadi-medial':23,
+  'Waw':24,
+  'Yod':25,
+  'Zayin':26}
 
 
 def resize_data(image: Image.Image, width: int, height: int) -> Tuple[
@@ -34,7 +61,7 @@ def resize_data(image: Image.Image, width: int, height: int) -> Tuple[
     return resized_image, resized_shape
 
 
-def save_coco_label(file: str, label: str, points: Box, data_folder: str,
+def save_coco_label(file: str, label_class: str, points: Box, data_folder: str,
                     folder: str):
     """
     Saves the label of the image in coco format: classs, x_c, y_c, w, h
@@ -49,11 +76,11 @@ def save_coco_label(file: str, label: str, points: Box, data_folder: str,
     y_c = points[1]
     w = points[2]
     h = points[3]
-    label = '{} {} {} {} {}'.format(label, x_c, y_c, w, h).replace('"', '')
+    label_class = labels[label_class]
+    print("LABEL :", label_class)
+    label = '{} {} {} {} {}'.format(label_class, x_c, y_c, w, h).replace('"', '')
     file = str(file) + '.txt'
-    folder_path = os.path.join(data_folder, "labels", folder)
-    assert_dir(folder_path)
-    with open(os.path.join(folder_path, str(file)), 'a') as f:
+    with open(os.path.join(data_folder, "labels", folder, str(file)), 'a') as f:
         f.write(label)
         f.write("\n")
         f.close()
@@ -96,6 +123,43 @@ def load_classes(folders):
 def assert_dir(dir):
     if not os.path.exists(dir):
         os.makedirs(dir)
+
+
+def remove_directory(directory):
+    # check if the directory exists
+    if not os.path.isdir(directory):
+        return
+
+    # Iterate over the contents of the directory
+    for item in os.listdir(directory):
+        item_path = os.path.join(directory, item)
+        print(item_path)
+
+        # Check if the item is a directory
+        if os.path.isdir(item_path):
+            # Recursively call remove_directory to remove subdirectories
+            remove_directory(item_path)
+
+        else:
+            # Remove files within the directory
+            os.remove(item_path)
+            # print(f"Removed file: {item_path}")
+
+    # Remove the empty directory itself
+    os.rmdir(directory)
+    # print(f"Removed directory: {directory}")
+
+
+def remove_train_test_val(data_folder):
+    """
+    Remove the train, test, val folders - for both images and labels
+    """
+    dirs = ['images', 'labels']
+    subdirs = ['train', 'test', 'val']
+
+    for dir in dirs:
+        for subdir in subdirs:
+            remove_directory(os.path.join(data_folder, dir, subdir))
 
 
 # TODO: might use this function in the final pipeline

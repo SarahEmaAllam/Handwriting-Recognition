@@ -5,38 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="45952f45-4eee-4865-884c-d5cb7959b15e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/generate_data/sample_generator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Handwriting-Recognition.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Handwriting-Recognition.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_19_05_2023_12_57_[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_19_05_2023_12_57__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.~lock.Handwriting recognition.docx#" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/andreea/char_aug.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/andreea/char_aug.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/andreea/preprocessing.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/andreea/preprocessing.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/andreea/text_aug.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/andreea/text_aug.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate_data/LineAugmentation.py" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/augmentation/line_augmentation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate_data/fix.py" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/ngram/fix.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate_data/generator_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/data_generator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate_data/generator_text.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate_data/labels/labels.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate_data/labels/test.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate_data/labels/test1.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate_data/labels/test2.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate_data/labels/test3.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate_data/ngrams_frequencies_withNames_fixed.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/ngram/ngrams_frequencies_withNames_fixed.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate_data/ngrams_frequencies_withNames_prob.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/ngram/ngrams_frequencies_withNames_prob.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate_data/output/test.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate_data/output/test1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate_data/output/test2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate_data/output/test3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/generate_data/text_generator_ngram.py" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/ngram/text_generator_ngram.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/helper_functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/helper_functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/generate_data/sample_generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/generate_data/sample_generator.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yolov8m.pt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,11 +54,11 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/data/labels" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/yolo" />
       <recent name="$PROJECT_DIR$/generate_data/augmentation" />
       <recent name="$PROJECT_DIR$/generate_data/ngram" />
-      <recent name="$PROJECT_DIR$/data/labels/old" />
     </key>
   </component>
   <component name="RunManager" selected="Python.model">
@@ -148,7 +122,7 @@
       <option name="presentableId" value="Default" />
       <updated>1684437093110</updated>
       <workItem from="1684437094618" duration="111946000" />
-      <workItem from="1685611666071" duration="2512000" />
+      <workItem from="1685611666071" duration="7508000" />
     </task>
     <servers />
   </component>
@@ -174,7 +148,7 @@
     <SUITE FILE_PATH="coverage/Handwriting_Recognition$helper_functions.coverage" NAME="helper_functions Coverage Results" MODIFIED="1685193943703" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generate_data" />
     <SUITE FILE_PATH="coverage/Handwriting_Recognition$generator_data.coverage" NAME="generator_data Coverage Results" MODIFIED="1684607117006" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Handwriting_Recognition$main.coverage" NAME="main Coverage Results" MODIFIED="1684624397975" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/preprocess" />
-    <SUITE FILE_PATH="coverage/Handwriting_Recognition$model.coverage" NAME="model Coverage Results" MODIFIED="1685614115415" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Handwriting_Recognition$model.coverage" NAME="model Coverage Results" MODIFIED="1685617503578" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Handwriting_Recognition$fix.coverage" NAME="fix Coverage Results" MODIFIED="1684624416711" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Handwriting_Recognition$sample_generator.coverage" NAME="sample_generator Coverage Results" MODIFIED="1685365601118" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generate_data" />
     <SUITE FILE_PATH="coverage/Handwriting_Recognition$generator_text.coverage" NAME="generator_text Coverage Results" MODIFIED="1685009501450" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/generate_data" />

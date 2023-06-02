@@ -2,6 +2,7 @@ import cv2
 from PIL import Image
 import numpy as np
 import os
+
 Box = [float, float, float, float]
 FOLDER = 'train'
 WORD_LENGTH = 10
@@ -14,6 +15,8 @@ HEIGHT = 640
 PADDING = 10 * np.random.randint(10, size=1)[0]
 WHITESPACE = 15
 SCRIPT_NAME = 'test'
+
+
 def save_coco_label(points: Box):
     """
     Saves the label of the image in coco format: classs, x_c, y_c, w, h
@@ -28,6 +31,7 @@ def save_coco_label(points: Box):
         f.write(label)
         f.write("\n")
         f.close()
+
 
 def draw_boxes(img, x, y, w, h):
     dh, dw, _ = np.asarray(img).shape
@@ -51,7 +55,6 @@ def draw_boxes(img, x, y, w, h):
     cv2.waitKey(0)
 
 
-
 img = cv2.imread('script-0.jpeg', cv2.IMREAD_UNCHANGED)
 im = Image.fromarray(img)
 
@@ -61,7 +64,7 @@ with open('script-0.txt') as f:
         print(line)
         f_line = []
         for x in line.split(" "):
-            f_line.append( float(x) )
+            f_line.append(float(x))
         print(f_line)
         line = f_line
         x_c = line[1]

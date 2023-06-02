@@ -1,5 +1,5 @@
 import os
-from generate_data.sample_generator import generate_sample
+from generate_data.sample_generator import generate_sample, DATA_FOLDER
 from ultralytics import YOLO
 import numpy as np
 import optuna
@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from tqdm import tqdm
 from generate_data.sample_generator import generate_sample, FOLDER
+from generate_data.helper_functions import remove_train_test_val
 
 TRAIN_SIZE = 6
 VAL_SIZE = 3
@@ -34,6 +35,9 @@ PATH = os.getcwd()
 
 
 def produce_data():
+    # clean up the folders before saving new data
+    remove_train_test_val(DATA_FOLDER)
+
     # generate data and save them
     for idx, iter in tqdm(enumerate(range(TRAIN_SIZE)), desc="Generating training data"):
         TEXT_LENGTH = np.random.randint(1, 100 * MAX_TXT_LENGTH, size=1)[0]
@@ -166,7 +170,8 @@ def train_model(trial):
 
 
 if __name__ == '__main__':
+    remove_train_test_val(DATA_FOLDER)
     # generate_sample(FOLDER, "test")
-    produce_data()
-    set_optuna_study()
-    results()
+    # produce_data()
+    # set_optuna_study()
+    # results()
