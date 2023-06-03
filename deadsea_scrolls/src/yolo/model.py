@@ -11,6 +11,7 @@ from tqdm import tqdm
 from generate_data.sample_generator import generate_sample
 from generate_data.data_generator import init_font
 import util.helper_functions as hf
+from preprocess.preprocessing import preprocessing
 from util.global_params import *
 from util.helper_functions import assert_dir
 
@@ -49,6 +50,10 @@ def produce_data():
 
     # make sure all needed folders exist
     prep_folder_structure()
+
+    # do preprocessing if needed
+    if not os.path.exists(PREPROCESS_DIR):
+        preprocessing()
 
     # generate data and save them
     for idx, iter in tqdm(enumerate(range(TRAIN_SIZE)), desc="Generating training data"):

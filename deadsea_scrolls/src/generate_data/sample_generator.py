@@ -22,6 +22,10 @@ def stitch(images, text, folder, script_name):
     """
     images_type = []
     for i in images:
+        if type(i) == ((1, 1), '|O'):
+            print("something odd happened here")
+            input("press enter")
+            continue
         i = hf.Image.fromarray(i)
         images_type.append(i)
     widths, heights = zip(*(i.size for i in images_type))

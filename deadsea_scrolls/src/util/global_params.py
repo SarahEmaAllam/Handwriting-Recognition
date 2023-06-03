@@ -36,8 +36,8 @@ MODEL_FOLDER = 'resources'
 # paths for preprocessing
 SOURCE_SYMBOLS = os.path.join(DATA_FOLDER, 'monkbrill')
 SOURCE_SCROLLS = os.path.join(DATA_FOLDER, 'image-data')
-OUTPUT_DIR = os.path.join(DATA_FOLDER, 'preprocessed_images')
+PREPROCESS_DIR = os.path.join(DATA_FOLDER, 'preprocessed_images')
 
-LETTERS_FOLDER = os.path.join(OUTPUT_DIR, 'symbols')
+LETTERS_FOLDER = os.path.join(PREPROCESS_DIR, 'symbols')
 FONT_PATH = 'resources/Habbakuk.TTF'  # Linux is capital sensitive
 N_GRAM_PATH = 'resources/'

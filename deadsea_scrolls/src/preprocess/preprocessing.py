@@ -7,7 +7,7 @@ import util.helper_functions as hf
 
 def is_image_file(filename):
     return filename.lower().endswith(
-        ('.png', '.jpg', '.jpeg', '.tif', '.tiff', '.bmp', '.gif', 'pmg'))
+        ('.png', '.jpg', '.jpeg', '.tif', '.tiff', '.bmp', '.gif', '.pgm'))
 
 
 def detect_on_edge(labels, amount):
@@ -44,15 +44,17 @@ def crop_clean_symbols(inputdir, outputdir):
     max_width = 0
     max_height = 0
 
-    for (subdir, _, files) in os.walk(inputdir):
+    for subdir, _, files in os.walk(inputdir):
         print("Start crop clean: " + os.path.basename(subdir))
         fulloutpath = os.path.join(outputdir, os.path.basename(subdir))
 
-        hf.assert_dir(fulloutpath)
+        if len(files) != 0:
+            hf.assert_dir(fulloutpath)
 
         for file in files:
             if not is_image_file(file):
                 continue
+
             filepath = os.path.join(subdir, file)
             srcimage = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
             blurred = cv2.GaussianBlur(srcimage, (3, 3), 0)
@@ -93,7 +95,7 @@ def crop_clean_symbols(inputdir, outputdir):
                                                 cropped_labels, cropped_img,
                                                 200)
 
-            cv2.imwrite(fulloutpath + file, cropped_img)
+            cv2.imwrite(os.path.join(fulloutpath, file), cropped_img)
 
         print("Finished crop clean: " + os.path.basename(subdir))
 
@@ -150,21 +152,21 @@ def pre_processing(input_dir, output_dir):
             print("Finished cleaning: " + file)
 
 
-if __name__ == '__main__':
+def preprocessing():
 
-    hf.assert_dir(OUTPUT_DIR)
+    hf.assert_dir(PREPROCESS_DIR)
 
-    symbols_dir = os.path.join(OUTPUT_DIR, "symbols")
+    symbols_dir = os.path.join(PREPROCESS_DIR, "symbols")
     hf.assert_dir(symbols_dir)
 
-    scrolls_dir = os.path.join(OUTPUT_DIR, "scrolls")
+    scrolls_dir = os.path.join(PREPROCESS_DIR, "scrolls")
     hf.assert_dir(scrolls_dir)
 
     print("Starting cropping and cleaning process.")
     maxWidth, maxHeight = crop_clean_symbols(SOURCE_SYMBOLS, symbols_dir)
     print("Finished cropping and cleaning process")
     print("starting rescaling process")
-    rescale_images(OUTPUT_DIR, maxWidth, maxHeight)
+    rescale_images(PREPROCESS_DIR, maxWidth, maxHeight)
 
     print("Starting processing scrolls.")
     pre_processing(SOURCE_SCROLLS, scrolls_dir)
