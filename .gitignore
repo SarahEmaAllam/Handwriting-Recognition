@@ -1,5 +1,5 @@
 # Images data folder
-data/
+deadsea_scrolls/data/
 IAM-data/
 boxes/
 datasets/
@@ -273,3 +273,4 @@ Temporary Items
 
 # yolo
 yolov8?.pt
+deadsea_scrolls/runs
