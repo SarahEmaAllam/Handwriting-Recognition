@@ -29,6 +29,8 @@ def prep_folder_structure():
         for subdir in subdirs:
             hf.remove_directory(os.path.join(DATA_FOLDER, dir, subdir))
 
+    hf.remove_directory(os.path.join(RUN_FOLDER, 'detect', STORE_NAME))
+
     hf.assert_dir(DATA_FOLDER)
     hf.assert_dir(DATA_FOLDER + "/images")
     hf.assert_dir(DATA_FOLDER + "/images/train")
@@ -74,9 +76,21 @@ def produce_data():
                         text_length=text_len)
 
 
+def resume_check():
+    run_file = os.path.join(RUN_FOLDER, 'detect', STORE_NAME, 'weights', 'last.pt')
+    return os.path.exists(run_file)
+
+
 def set_optuna_study():
+    storage_file = STUDIES_FOLDER + '/hwr.db'
+
+    if not resume_check() and os.path.exists(storage_file):
+        os.remove(storage_file)
+
+    hf.assert_dir(STUDIES_FOLDER)
+
     study = optuna.create_study(sampler=optuna.samplers.TPESampler(),
-                                direction='maximize')
+                                direction='maximize', storage='sqlite:///' + storage_file, load_if_exists=True)
     study.optimize(train_model, n_trials=3)
     joblib.dump(study, os.path.join('studies', 'handwriting_optuna.pkl'))
 
@@ -112,11 +126,18 @@ def train_model(trial):
     set_settings({'datasets_dir': os.path.join(os.getcwd(), DATA_FOLDER),
                   'runs_dir': os.path.join(os.getcwd(), RUN_FOLDER)})
 
+    model_folder = MODEL_FOLDER
+    det_model_name = DET_MODEL_NAME
+    should_resume = resume_check()
+    if should_resume:
+        model_folder = os.path.join(RUN_FOLDER, 'detect', STORE_NAME, 'weights')
+        det_model_name = 'last.pt'
+
     # Load a pretrained YOLO model (recommended for training)
     # put it in the MODEL_FOLDER folder
     path = os.getcwd()
-    os.chdir(MODEL_FOLDER)
-    model = YOLO(DET_MODEL_NAME)
+    os.chdir(model_folder)
+    model = YOLO(det_model_name)
     os.chdir(path)
 
     cfg = {'train_batch_size': 8,
@@ -144,7 +165,8 @@ def train_model(trial):
         # choices = ['SGD', 'Adam', 'AdamW', 'RMSProp'],
         cos_lr=cfg['cos_lr'],  # double peak learning,
         momentum=cfg['momentum'],
-        name='yolov8n_handwriting'
+        name=STORE_NAME,
+        resume=should_resume
     )
 
     print("TRAINING RESULTS: ", results)
@@ -169,7 +191,8 @@ def run_model():
     # generate_sample(FOLDER, "test")
 
     # generate and split the data
-    produce_data()
+    if not resume_check():
+        produce_data()
 
     # train the model
     set_optuna_study()

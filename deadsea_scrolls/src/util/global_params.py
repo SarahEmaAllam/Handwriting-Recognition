@@ -3,9 +3,9 @@ import os
 import numpy as np
 
 # Model parameters
-TRAIN_SIZE = 6000
-VAL_SIZE = 3000
-TEST_SIZE = 1000
+TRAIN_SIZE = 6 # 6000
+VAL_SIZE = 3 # 3000
+TEST_SIZE = 1 # 1000
 DET_MODEL_NAME = "yolov8m"
 MAX_TXT_LENGTH = 5
 
@@ -32,6 +32,8 @@ WHITESPACE = 15
 DATA_FOLDER = 'data'
 RUN_FOLDER = 'runs'
 MODEL_FOLDER = 'resources'
+STUDIES_FOLDER = 'studies'
+STORE_NAME = DET_MODEL_NAME + '_handwriting'
 
 # paths for preprocessing
 SOURCE_SYMBOLS = os.path.join(DATA_FOLDER, 'monkbrill')
