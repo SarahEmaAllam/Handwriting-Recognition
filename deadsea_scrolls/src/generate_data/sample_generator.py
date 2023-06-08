@@ -32,7 +32,7 @@ def stitch(images, text, folder, script_name):
     max_height = max(heights)
     new_im = hf.Image.new('RGB', (WIDTH, HEIGHT), color="white")
 
-    div_factor = random.randint(1, 8)
+    div_factor = random.randint(2, 4)
 
     x_offset = PADDING * np.random.randint(1, 4, size=1)[0]
     start_offset = x_offset
@@ -48,7 +48,7 @@ def stitch(images, text, folder, script_name):
             y_offset = y_offset
             # (x_offset, 0) = upper left corner of the canvas where to paste
         # cropping = np.random.randint(5, 8, size=1)[0]
-        if y_offset >= HEIGHT:
+        if y_offset + im.size[1] >= HEIGHT:
             break
         cropping = np.random.randint(5, 6, size=1)[0]
         if im.size[0] > 10:
