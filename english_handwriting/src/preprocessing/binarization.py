@@ -53,7 +53,7 @@ def binarize_images(inputdir, outputdir):
         print("Finished binarize: " + os.path.basename(subdir))
 
 
-def binerize():
+def binarize():
 
     assert_dir(PREPROCESS_DIR)
 
@@ -66,4 +66,4 @@ def binerize():
 
 
 if __name__ == '__main__':
-    binerize()
+    binarize()
