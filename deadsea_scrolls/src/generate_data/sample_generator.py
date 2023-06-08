@@ -26,8 +26,11 @@ def stitch(images, text, folder, script_name):
             print("something odd happened here")
             input("press enter")
             continue
-        i = hf.Image.fromarray(i)
-        images_type.append(i)
+        try:
+            i = hf.Image.fromarray(i)
+            images_type.append(i)
+        except Exception as e:
+            print(e)
     widths, heights = zip(*(i.size for i in images_type))
     max_height = max(heights)
     new_im = hf.Image.new('RGB', (WIDTH, HEIGHT), color="white")
