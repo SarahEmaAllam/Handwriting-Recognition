@@ -167,7 +167,8 @@ def preprocessing():
     print("Finished cropping and cleaning process")
     print("starting rescaling process")
     rescale_images(PREPROCESS_DIR, maxWidth, maxHeight)
+    print("Finished rescaling process")
 
-    print("Starting processing scrolls.")
-    pre_processing(SOURCE_SCROLLS, scrolls_dir)
-    print("Finished processing scrolls.")
+#    print("Starting processing scrolls.")
+#    pre_processing(SOURCE_SCROLLS, scrolls_dir)
+#    print("Finished processing scrolls.")
