@@ -1,6 +1,6 @@
+import random
 from glob import glob
 import string
-
 
 import util.helper_functions as hf
 import generate_data.augmentation.char_augmentation as ca
@@ -22,24 +22,26 @@ def stitch(images, text, folder, script_name):
     """
     images_type = []
     for i in images:
-        if type(i) == ((1, 1), '|O'):
-            print("something odd happened here")
-            input("press enter")
-            continue
-        i = hf.Image.fromarray(i)
-        images_type.append(i)
+        try:
+            i = hf.Image.fromarray(i)
+            images_type.append(i)
+        except TypeError:
+            print("something odd happened. Just skip and continue")
+
     widths, heights = zip(*(i.size for i in images_type))
     max_height = max(heights)
     new_im = hf.Image.new('RGB', (WIDTH, HEIGHT), color="white")
+
+    div_factor = random.randint(1, 8)
 
     x_offset = PADDING * np.random.randint(1, 4, size=1)[0]
     start_offset = x_offset
     y_offset = PADDING * np.random.randint(1, 2, size=1)[0]
     for idx, im in enumerate(images_type):
         if im.size[0] > 1 and im.size[1] > 1:
-            im = im.resize((int(im.size[0] / 2), int(im.size[1] / 2)))
+            im = im.resize((int(im.size[0] / div_factor), int(im.size[1] / div_factor)))
         if new_im.size[0] - (x_offset + im.size[0]) <= start_offset:
-            y_offset = y_offset + int(max_height / 2)
+            y_offset = y_offset + int(max_height / div_factor)
             x_offset = start_offset
         else:
             #  CHANGE Y OFFSET BASED ON (NEW_IMG.HEIGTH - IM.HEIGTH) / 2
@@ -64,7 +66,7 @@ def stitch(images, text, folder, script_name):
         if label not in string.punctuation:
             hf.save_coco_label(script_name, label, box, DATA_FOLDER, folder)
             # uncomment to draw boxes
-            # draw_boxes(new_im, x_c, y_c, w, h, idx)
+            # hf.draw_boxes(new_im, x_c, y_c, w, h, idx)
         # uncomment to see the process of stitching
         # new_im.show()
         #  slide the upper left corner for pasting next image next iter
@@ -133,5 +135,3 @@ def generate_sample(folder, script_name, text_length=TEXT_LENGTH):
     # rotate([im for im in script if im.shape[0] > 20])
 
     stitch(script, text, folder, script_name)
-
-
