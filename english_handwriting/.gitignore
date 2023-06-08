@@ -1,0 +1,11 @@
+**/data/
+**/data/*
+**/data/**
+
+**/venv/
+**/venv/*
+**/venv/**
+
+**/.idea/
+**/.idea/*
+**/.idea/**
