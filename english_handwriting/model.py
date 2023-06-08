@@ -85,9 +85,21 @@ class Model:
         output = apply_BLSTM(256, output)
         output = apply_BLSTM(256, output)
 
-        return output
+        output = keras.layers.Dense(activation="softmax")
+        output = CTCLayer(name="ctc_loss")(labels, output)
+
+        model = keras.models.Model(
+            inputs=[inp_img, labels], output=output, name="test_model_v1"
+        )
+
+        opt = keras.optimizers.Adam()
+        model.compile(optimizer=opt)
+        # Transcription layer -Transcription is the process of converting the per-frame predictions made by RNN into a label sequence.
+        # translate the per-frame predictions by the recurrent layers into a label sequence
+        return model
 
 
 if __name__ == '__main__':
+
     ex_model = Model().build_model()
     ex_model.summary()
