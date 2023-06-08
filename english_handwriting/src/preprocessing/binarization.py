@@ -2,7 +2,7 @@ import os
 import cv2
 import numpy as np
 
-PREPROCESS_DIR = "../data/"
+PREPROCESS_DIR = "../../data/"
 SOURCE_DATA = "../data/IAM-data/"
 
 
@@ -53,7 +53,7 @@ def binarize_images(inputdir, outputdir):
         print("Finished binarize: " + os.path.basename(subdir))
 
 
-def preprocessing():
+def binerize():
 
     assert_dir(PREPROCESS_DIR)
 
@@ -65,5 +65,5 @@ def preprocessing():
     print("Finished binarize")
 
 
-if __name__ == "__main__":
-    preprocessing()
+if __name__ == '__main__':
+    binerize()

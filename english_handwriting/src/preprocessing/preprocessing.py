@@ -9,13 +9,13 @@ from keras.src.layers import StringLookup
 AUTOTUNE = tf.data.AUTOTUNE
 
 # Relative path to the dataset
-iam_lines_path = os.path.join('IAM-data', 'iam_lines_gt.txt')
+iam_lines_path = os.path.join('../../data/IAM-data', 'iam_lines_gt.txt')
 
 # Relative path to the images
-img_path = os.path.join('IAM-data', 'img')
+img_path = os.path.join('../../data', 'binarized', 'img')
 
 # Relative path to save the preprocessed data
-preprocessed_data_path = os.path.join('IAM-data', 'preprocessed_data')
+preprocessed_data_path = os.path.join('../../data', 'preprocessed_data')
 
 # parameters
 max_len = 128
@@ -110,7 +110,7 @@ def load_images(images_names: list[str]) -> list[tf.Tensor]:
         image = tf.cast(image, tf.float32) / 255.0
 
         # binarize the image
-        image = tf.where(image > binarize_threshold, 1, 0)
+        # image = tf.where(image > binarize_threshold, 1, 0)
 
         images.append(image)
 
@@ -238,6 +238,21 @@ def encode_labels(labels: list[str], encoder: StringLookup,
     return padded_labels
 
 
+def get_decoder(decoder_vocab: list[str]) -> StringLookup:
+    """
+    Decode the label
+    :param decoder_vocab: list[str]
+        Decoder vocabulary
+    :return: str
+        Decoded label
+    """
+    # get the decoder
+    decoder = StringLookup(vocabulary=decoder_vocab,
+                           mask_token=None, invert=True)
+
+    return decoder
+
+
 def save_dataset(dataset: tf.data.Dataset,
                  name: str, path: str = preprocessed_data_path):
     """
@@ -290,9 +305,9 @@ def load_decoder(path: str) -> list[str]:
     return decoder
 
 
-def save_decoder(decoder: list[str], path: str):
+def save_decoder_vocab(decoder: list[str], path: str):
     """
-    Save the decoder
+    Save the vocabulary for the decoder
     :param decoder: list[str]
         Decoder
     :param path: str
@@ -341,7 +356,6 @@ def preprocess_data(print_progress: bool = False):
 
     # encode the labels
     encoder, decoder = get_encoding(vocab)
-    decoder_vocab = decoder.get_vocabulary()
 
     encoded_train_labels = encode_labels(
         train_df['label'].values, encoder, max_label_len)
@@ -364,28 +378,32 @@ def preprocess_data(print_progress: bool = False):
         print('Create dataset\t',
               time.time() - time_start, "seconds")
 
-    return train_data, val_data, test_data, decoder_vocab
+    return train_data, val_data, test_data, decoder
 
 
-def main():
+def preprocess():
+    """
+    Preprocess the data
+    """
     train_path = get_data_path('train')
     val_path = get_data_path('val')
     test_path = get_data_path('test')
-    decoder_path = get_data_path('decoder.txt')
+    vocab_path = get_data_path('vocab.txt')
 
     # check if the dataset has already been preprocessed
     if os.path.exists(train_path) and os.path.exists(val_path) and \
-            os.path.exists(test_path) and os.path.exists(decoder_path):
+            os.path.exists(test_path) and os.path.exists(vocab_path):
 
         train_data = tf.data.Dataset.load(train_path)
         val_data = tf.data.Dataset.load(val_path)
         test_data = tf.data.Dataset.load(test_path)
 
         # load the decoder
-        decoder_vocab = load_decoder(decoder_path)
+        decoder_vocab = load_decoder(vocab_path)
+        decoder = get_decoder(decoder_vocab)
 
     else:
-        train_data, val_data, test_data, decoder_vocab = \
+        train_data, val_data, test_data, decoder = \
             preprocess_data(print_progress=True)
 
         # save the datasets
@@ -399,7 +417,7 @@ def main():
         test_data.save(test_path)
 
         # save the decoder
-        save_decoder(decoder_vocab, decoder_path)
+        save_decoder_vocab(decoder.get_vocabulary(), vocab_path)
 
     # create batches
     train_batches = train_data.batch(batch_size).cache().prefetch(
@@ -409,7 +427,8 @@ def main():
     test_batches = test_data.batch(batch_size).cache().prefetch(
         buffer_size=AUTOTUNE)
 
-    return train_batches, val_batches, test_batches, decoder_vocab
+    return train_batches, val_batches, test_batches, decoder
 
 
-main()
+if __name__ == '__main__':
+    preprocess()

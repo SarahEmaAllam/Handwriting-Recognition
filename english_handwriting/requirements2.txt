@@ -1,5 +1,4 @@
 keras==2.13.1rc0
-numpy==1.21.4
 numpy==1.24.3
 pandas==2.0.0
 pandas==2.0.1
@@ -7,3 +6,4 @@ scikit_learn==1.1.1
 scikit_learn==1.2.2
 tensorflow==2.13.0rc1
 tensorflow_macos==2.13.0rc1
+opencv-python~=4.7.0.72
