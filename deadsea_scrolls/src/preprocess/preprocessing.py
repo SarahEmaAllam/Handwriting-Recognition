@@ -168,6 +168,6 @@ def preprocessing():
     print("starting rescaling process")
     rescale_images(PREPROCESS_DIR, maxWidth, maxHeight)
 
-    print("Starting processing scrolls.")
-    pre_processing(SOURCE_SCROLLS, scrolls_dir)
-    print("Finished processing scrolls.")
+#    print("Starting processing scrolls.")
+#    pre_processing(SOURCE_SCROLLS, scrolls_dir)
+#    print("Finished processing scrolls.")
