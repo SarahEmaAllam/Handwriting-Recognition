@@ -4,13 +4,9 @@ import tensorflow as tf
 
 AUTOTUNE = tf.data.AUTOTUNE
 
-# Relative path to the dataset
-IAM_LINES_PATH = os.path.join('data/IAM-data', 'iam_lines_gt.txt')
-
-# Relative path to the images
-IMAGES_PATH = os.path.join('data', 'binarized', 'img')
-
-# Relative path to save the preprocessed data
+IAM_LINES_PATH = os.path.join('data', 'IAM-data', 'iam_lines_gt.txt')
+IMAGES_PATH = os.path.join('data', 'IAM-data', 'img')
+BINARIZED_IMAGES_PATH = os.path.join('data', 'binarized')
 PREPROCESSED_DATA_PATH = os.path.join('data', 'preprocessed_data')
 
 # parameters
