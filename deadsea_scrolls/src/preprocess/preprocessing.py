@@ -153,7 +153,6 @@ def pre_processing(input_dir, output_dir):
 
 
 def preprocessing():
-
     hf.assert_dir(PREPROCESS_DIR)
 
     symbols_dir = os.path.join(PREPROCESS_DIR, "symbols")

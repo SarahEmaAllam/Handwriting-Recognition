@@ -6,6 +6,7 @@ from typing import List
 import pandas as pd
 import os
 from generate_data.data_generator import char_map
+from util.helper_functions import labels
 from util.global_params import N_GRAM_PATH
 
 
@@ -124,6 +125,7 @@ class NgramModel(object):
                     context_queue = (n - 1) * ['<START>']
                 else:
                     context_queue.append(obj)
+
         return ' '.join(result)
 
 
@@ -163,8 +165,8 @@ def generator(text_length, ngram_size, print_text=False):
             if prev == ".":
                 print(" ", end="")
             prev = letter
-            if letter in char_map:
-                print(char_map[letter], end="")
+            if letter in labels:
+                print(labels[letter], end="")
             else:
                 print(letter, end="")
 
