@@ -1,8 +1,10 @@
 import time
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
-from keras.src.layers import StringLookup
 from util.global_params import *
+from tensorflow.keras.layers import StringLookup
+from util.utils import set_working_dir
 
 
 def get_dataframe(path: str) -> pd.DataFrame:
@@ -299,7 +301,6 @@ def preprocess_data(print_progress: bool = False):
     """
     time_start = time.time()
     if print_progress:
-        print('Preprocessing data...')
         print('Task\t\t\tTime elapsed (seconds)')
         print('----------------------------------')
 
@@ -356,10 +357,13 @@ def preprocess_data(print_progress: bool = False):
     return train_data, val_data, test_data, decoder
 
 
-def preprocess():
+def preprocess(print_progress=False):
     """
     Preprocess the data
     """
+    if print_progress:
+        print('Preprocessing data')
+
     train_path = get_data_path('train')
     val_path = get_data_path('val')
     test_path = get_data_path('test')
@@ -368,6 +372,9 @@ def preprocess():
     # check if the dataset has already been preprocessed
     if os.path.exists(train_path) and os.path.exists(val_path) and \
             os.path.exists(test_path) and os.path.exists(vocab_path):
+
+        if print_progress:
+            print('Loading preprocessed data')
 
         train_data = tf.data.Dataset.load(train_path)
         val_data = tf.data.Dataset.load(val_path)
@@ -379,7 +386,7 @@ def preprocess():
 
     else:
         train_data, val_data, test_data, decoder = \
-            preprocess_data(print_progress=True)
+            preprocess_data(print_progress=print_progress)
 
         # save the datasets
 
@@ -394,6 +401,9 @@ def preprocess():
         # save the decoder
         save_decoder_vocab(decoder.get_vocabulary(), vocab_path)
 
+    if print_progress:
+        print('Creating batches')
+
     # create batches
     train_batches = train_data.batch(BATCH_SIZE).cache().prefetch(
         buffer_size=AUTOTUNE)
@@ -406,4 +416,7 @@ def preprocess():
 
 
 if __name__ == '__main__':
-    preprocess()
+    # change working dir to root of project
+    set_working_dir(os.path.abspath(__file__))
+
+    preprocess(print_progress=True)
