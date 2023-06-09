@@ -2,6 +2,7 @@ import optuna
 import joblib
 import os
 import numpy as np
+from multiprocessing import Pool
 from ultralytics import YOLO
 from ultralytics.yolo.utils import set_settings
 from optuna.visualization import plot_optimization_history
@@ -48,6 +49,37 @@ def prep_folder_structure():
         os.remove(DATA_FOLDER + "/labels/val.cache")
 
 
+def generate_data(idx):
+    text_len = np.random.randint(1, 100 * MAX_TXT_LENGTH, size=1)[0]
+    generate_sample(FOLDER_TRAIN, SCRIPT_NAME + str(idx),
+                    text_length=text_len)
+
+
+def split_train_val(idx):
+    text_len = np.random.randint(1, 100 * MAX_TXT_LENGTH, size=1)[0]
+    generate_sample(FOLDER_VAL, SCRIPT_NAME + str(idx + TRAIN_SIZE + 1),
+                    text_length=text_len)
+
+
+def generate_test(idx):
+    text_len = np.random.randint(1, 100 * MAX_TXT_LENGTH, size=1)[0]
+    generate_sample(FOLDER_TEST,
+                    SCRIPT_NAME + str(idx + TRAIN_SIZE + VAL_SIZE + 1),
+                    text_length=text_len)
+
+
+def task_manager(func, size, name):
+    # create task pool
+    with Pool() as p:
+        tuple(tqdm(p.imap(func, range(size)), total=size, desc=name))
+
+    p.close()
+    p.join()
+
+    # report that all tasks are completed
+    print('Done with: ' + name, flush=True)
+
+
 def produce_data():
 
     # make sure all needed folders exist
@@ -58,22 +90,13 @@ def produce_data():
         preprocessing()
 
     # generate data and save them
-    for idx, iter in tqdm(enumerate(range(TRAIN_SIZE)), desc="Generating training data"):
-        text_len = np.random.randint(1, 100 * MAX_TXT_LENGTH, size=1)[0]
-        generate_sample(FOLDER_TRAIN, SCRIPT_NAME + str(iter),
-                        text_length=text_len)
+    task_manager(generate_data, TRAIN_SIZE, "Generating training data")
 
     # split into train and val
-    for idx, iter in tqdm(enumerate(range(VAL_SIZE)), desc="Generating validation data"):
-        text_len = np.random.randint(1, 100 * MAX_TXT_LENGTH, size=1)[0]
-        generate_sample(FOLDER_VAL, SCRIPT_NAME + str(iter + TRAIN_SIZE + 1),
-                        text_length=text_len)
+    task_manager(split_train_val, VAL_SIZE, "Generating validation data")
 
-    for idx, iter in tqdm(enumerate(range(TEST_SIZE)), desc="Generating testing data"):
-        text_len = np.random.randint(1, 100 * MAX_TXT_LENGTH, size=1)[0]
-        generate_sample(FOLDER_TEST,
-                        SCRIPT_NAME + str(iter + TRAIN_SIZE + VAL_SIZE + 1),
-                        text_length=text_len)
+    # generate test data
+    task_manager(generate_test, TEST_SIZE, "Generating testing data")
 
 
 def resume_check():
@@ -183,12 +206,24 @@ def train_model(trial):
     return fitness
 
 
-def run_model():
+def run_model(mode):
 
     init_font()
 
     # uncomment to test the data generation function (one sample)
     # generate_sample(FOLDER, "test")
+
+    if mode == "generate":
+        produce_data()
+        return
+
+    if mode == "train":
+        # train the model
+        set_optuna_study()
+
+        # show the results
+        results()
+        return
 
     # generate and split the data
     if not resume_check():
@@ -199,3 +234,6 @@ def run_model():
 
     # show the results
     results()
+
+
+

@@ -3,11 +3,9 @@ import os
 import numpy as np
 
 # Model parameters
-
-TRAIN_SIZE = 6
-VAL_SIZE = 3
-TEST_SIZE = 3
-
+TRAIN_SIZE = 6000
+VAL_SIZE = 3000
+TEST_SIZE = 1000
 DET_MODEL_NAME = "yolov8m"
 MAX_TXT_LENGTH = 5
 

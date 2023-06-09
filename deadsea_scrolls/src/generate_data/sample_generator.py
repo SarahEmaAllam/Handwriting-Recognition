@@ -2,6 +2,8 @@ import random
 from glob import glob
 import string
 
+import numpy as np
+
 import util.helper_functions as hf
 import generate_data.augmentation.char_augmentation as ca
 from generate_data.augmentation.scroll_augmentation import transform_scroll
@@ -22,11 +24,10 @@ def stitch(images, text, folder, script_name):
     """
     images_type = []
     for i in images:
-        try:
-            i = hf.Image.fromarray(i)
-            images_type.append(i)
-        except TypeError:
-            print("something odd happened. Just skip and continue")
+        if i.dtype == "object":
+            i = i.astype(np.uint8)
+        i = hf.Image.fromarray(i)
+        images_type.append(i)
     widths, heights = zip(*(i.size for i in images_type))
     max_height = max(heights)
     new_im = hf.Image.new('RGB', (WIDTH, HEIGHT), color="white")
@@ -105,7 +106,7 @@ def sample_text_generator(text_len, ngram_size):
 
             if np.random.random_sample() < 0.5:
                 random_sample = create_image(letter, (64, 69)).convert('1')
-                random_sample = np.array(random_sample)
+                random_sample = np.array(random_sample, dtype=np.uint8)
             else:
                 # TODO: these are grayscale images (uint8 ndarray)
                 #  make them binary
@@ -121,7 +122,7 @@ def sample_text_generator(text_len, ngram_size):
 
         script.append(random_sample)
 
-    script = np.array(script, dtype=object)
+    script = np.asarray(script, dtype=object)
     return script, text
 
 
