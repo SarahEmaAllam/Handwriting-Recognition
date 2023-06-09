@@ -1,7 +1,7 @@
 import time
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from keras.src.layers import StringLookup
+from tensorflow.keras.layers import StringLookup
 from util.global_params import *
 
 
