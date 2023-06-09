@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 # from keras.src.layers import StringLookup
 from tensorflow import keras
+from util.global_params import BATCH_SIZE
 
 
 def apply_max_pool(kernel, stride, x):
@@ -59,7 +60,7 @@ class Model:
         pass
 
     def build_model(self):
-        inp_img = keras.Input(shape=(self.img_width, self.img_height, 1), name="ex_img", dtype="float32")
+        inp_img = keras.Input(shape=(BATCH_SIZE, self.img_height , self.img_width, 1), name="ex_img", dtype="float32")
         labels = keras.Input(name='label', shape=(None,), dtype="float32")
 
         # 1st CNN layer
@@ -82,6 +83,10 @@ class Model:
         output = apply_twice_bn(output)
         # bridge btw CNN and BLSTM
         # sth flattening
+        print(output.shape)
+        # flatten
+        output = keras.layers.Flatten(output)
+        print("flattened : ", output.shape)
         output = apply_BLSTM(256, output)
         output = apply_BLSTM(256, output)
 
@@ -99,7 +104,8 @@ class Model:
         return model
 
 
-if __name__ == '__main__':
-
-    ex_model = Model().build_model()
-    ex_model.summary()
+# if __name__ == '__main__':
+#
+#     ex_model = Model().build_model()
+#     ex_model.summary()
+#
