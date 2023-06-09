@@ -2,11 +2,15 @@ import os
 from preprocessing.binarization import binarize
 from preprocessing.preprocessing import preprocess
 from util.utils import set_working_dir
+from data_agumentation import test
 
 if __name__ == '__main__':
     # change working dir to root of project
-    set_working_dir(os.path.abspath(__file__))
-
+    # set_working_dir(os.path.abspath(__file__))
+    # os.chdir(os.path.dirname (os.path.abspath(__file__)))
+    # os.chdir('../')
+    print(os.getcwd())
     # TODO: check if the binerized images are already created
     # binarize()
-    preprocess()
+    # preprocess()
+    test()

@@ -3,7 +3,10 @@ import cv2
 import numpy as np
 import albumentations as A
 from preprocessing import preprocessing
-
+from tensorflow import keras
+from keras.models import Sequential
+from keras.layers import Dense
+from model import Model
 
 # gets PIL image and returns augmented PIL image
 def augment_img(img):
@@ -59,9 +62,9 @@ def augment_img(img):
         ], p=0.5),
         # A.Blur(blur_limit=5,p=0.25),
     ])
-    img = transform(image=img)['image']
-    image = Image.fromarray(img)
-    return image
+    # img = transform(image=img)['image']
+    # image = Image.fromarray(img)
+    return img
 
 
 # def augment_using_ops(images, labels):
@@ -74,38 +77,45 @@ def augment_img(img):
 # 	# return the image and the label
 # 	return (images, labels)
 
-def load_batch():
-    ds = tf.data.Dataset.from_tensor_slices(imagePaths)
-    ds = (ds
-          # .shuffle(len(imagePaths), seed=42)
-          # .map(load_images, num_parallel_calls=AUTOTUNE)
-          # .cache()
-          # .batch(BATCH_SIZE)
-          # call the augmentation method here
-          .map(augment_img, num_parallel_calls=AUTOTUNE)
-          # .prefetch(tf.data.AUTOTUNE)
-          )
+# def load_batch():
+#     ds = tf.data.Dataset.from_tensor_slices(imagePaths)
+#     ds = (ds
+#           # .shuffle(len(imagePaths), seed=42)
+#           # .map(load_images, num_parallel_calls=AUTOTUNE)
+#           # .cache()
+#           # .batch(BATCH_SIZE)
+#           # call the augmentation method here
+#           .map(augment_img, num_parallel_calls=AUTOTUNE)
+#           # .prefetch(tf.data.AUTOTUNE)
+#           )
+#
+#     return ds
 
-    return ds
+def test():
+    print("[INFO] initializing model...")
+    # model = Sequential()
+    # model.add(keras.layers.Conv2D(32, (3, 3), padding="same", input_shape=(32, 32, 3)))
+    # model.add(keras.layers.Activation("relu"))
+    # model.add(keras.layers.Flatten())
+    # model.add(keras.layers.Dense(10))
+    # model.add(keras.layers.Activation("softmax"))
 
+    print("[INFO] compiling model...")
+    # model.compile(loss="sparse_categorical_crossentropy", optimizer="sgd",
+    #               metrics=["accuracy"])
 
-print("[INFO] initializing model...")
-model = Sequential()
-model.add(Conv2D(32, (3, 3), padding="same", input_shape=(32, 32, 3)))
-model.add(Activation("relu"))
-model.add(Flatten())
-model.add(Dense(10))
-model.add(Activation("softmax"))
+    model = Model().build_model()
+    # train the model
+    print("[INFO] training model...")
 
-print("[INFO] compiling model...")
-model.compile(loss="sparse_categorical_crossentropy", optimizer="sgd",
-              metrics=["accuracy"])
-# train the model
-print("[INFO] training model...")
-H = model.fit(
-    preprocessing.preprocess(),
-    validation_data=preprocessing.preprocess(),
-    epochs=EPOCHS)
-# show the accuracy on the testing set
-(loss, accuracy) = model.evaluate(testDS)
-print("[INFO] accuracy: {:.2f}%".format(accuracy * 100))
+    train_batches, val_batches, test_batches, decoder = preprocessing.preprocess()
+    H = model.fit(
+        train_batches.take(1),
+        validation_data=val_batches.take(1),
+        epochs=10)
+
+    print(H)
+# testDs =
+# # show the accuracy on the testing set
+# (loss, accuracy) = model.evaluate(testDS)
+# print("[INFO] accuracy: {:.2f}%".format(accuracy * 100))

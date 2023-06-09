@@ -4,6 +4,7 @@ import time
 import cv2
 import numpy as np
 
+
 from util.utils import set_working_dir
 from util.global_params import IMAGES_PATH, BINARIZED_IMAGES_PATH
 
@@ -21,7 +22,12 @@ def is_image_file(filename):
 
 
 def binarize_images(inputdir, outputdir):
-
+    print("inputdir : ", inputdir)
+    print("outputdir ", outputdir)
+    print("curent  : ", os.getcwd())
+    print(*os.walk(inputdir))
+    for val in os.walk(inputdir):
+        print(val)
     for subdir, _, files in os.walk(inputdir):
         print("Start binarize: " + os.path.basename(subdir))
         fulloutpath = os.path.join(outputdir, os.path.basename(subdir))
@@ -31,6 +37,7 @@ def binarize_images(inputdir, outputdir):
 
         for file in files:
             if not is_image_file(file):
+                print(type(file))
                 continue
 
             filepath = os.path.join(subdir, file)
