@@ -21,7 +21,8 @@ def apply_cnn(features, kernel, stride, padding, x):
         features,
         kernel,
         strides=stride,
-        padding=padding
+        padding=padding,
+        data_format='channels_last'
     )(x)
 
 
@@ -30,8 +31,8 @@ def apply_BLSTM(hidden, x):
 
 
 def apply_twice_bn(x):
-    out = keras.layers.BatchNormalization()(x)
-    return keras.layers.BatchNormalization(out)
+    out = keras.layers.BatchNormalization(axis=1)(x)
+    return keras.layers.BatchNormalization(axis=1)(out)
 
 
 class CTCLayer(keras.layers.Layer):
@@ -60,26 +61,27 @@ class Model:
         pass
 
     def build_model(self):
-        inp_img = keras.Input(shape=(BATCH_SIZE, self.img_height , self.img_width, 1), name="ex_img", dtype="float32")
+        inp_img = keras.Input(shape=(self.img_height , self.img_width, 1), name="ex_img", dtype="float32")
         labels = keras.Input(name='label', shape=(None,), dtype="float32")
 
         # 1st CNN layer
         # keras CONV2D filter cause 2 channels
-        output = apply_cnn(64, (3, 3), (1, 1), (1, 1), inp_img)
+        output = apply_cnn(64, (3, 3), (1, 1), 'same', inp_img)
         # 1st maxpool
+        print("frst: ", output.shape)
         output = apply_max_pool((2, 2), (2, 2), output)
         # 2nd CNN
-        output = apply_cnn(128, (3, 3), (1, 1), (1, 1), output)
+        output = apply_cnn(128, (3, 3), (1, 1), 'same', output)
         output = apply_max_pool((2, 2), (2, 2), output)
-        output = apply_cnn(256, (3, 3), (1, 1), (1, 1), output)
+        output = apply_cnn(256, (3, 3), (1, 1), 'same', output)
         output = apply_twice_bn(output)
-        output = apply_cnn(256, (3, 3), (1, 1), (1, 1), output)
+        output = apply_cnn(256, (3, 3), (1, 1), 'same', output)
         output = apply_max_pool((2, 2), (1, 2), output)
-        output = apply_cnn(512, (3, 3), (1, 1), (1, 1), output)
+        output = apply_cnn(512, (3, 3), (1, 1), 'same', output)
         output = apply_twice_bn(output)
-        output = apply_cnn(512, (3, 3), (1, 1), (1, 1), output)
+        output = apply_cnn(512, (3, 3), (1, 1), 'same', output)
         output = apply_max_pool((2, 2), (1, 2), output)
-        output = apply_cnn(512, (2, 2), (1, 1), (0, 0), output)
+        output = apply_cnn(512, (2, 2), (1, 1), 'valid', output)
         output = apply_twice_bn(output)
         # bridge btw CNN and BLSTM
         # sth flattening
