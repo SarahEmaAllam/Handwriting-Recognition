@@ -2,11 +2,7 @@ import random
 import cv2
 import numpy as np
 import albumentations as A
-from preprocessing import preprocessing
-from tensorflow import keras
-from keras.models import Sequential
-from keras.layers import Dense
-from model import Model
+
 
 # gets PIL image and returns augmented PIL image
 def augment_img(img):
@@ -91,32 +87,4 @@ def augment_img(img):
 #
 #     return ds
 
-def test():
-    print("[INFO] initializing model...")
-    # model = Sequential()
-    # model.add(keras.layers.Conv2D(32, (3, 3), padding="same", input_shape=(32, 32, 3)))
-    # model.add(keras.layers.Activation("relu"))
-    # model.add(keras.layers.Flatten())
-    # model.add(keras.layers.Dense(10))
-    # model.add(keras.layers.Activation("softmax"))
 
-    print("[INFO] compiling model...")
-    # model.compile(loss="sparse_categorical_crossentropy", optimizer="sgd",
-    #               metrics=["accuracy"])
-
-    train_batches, val_batches, test_batches, decoder = preprocessing.preprocess()
-    print("[INFO] training model...")
-    print("train batch ", train_batches.take(1))
-    model = Model().build_model(len(decoder.get_vocabulary()) + 2)
-    # train the model
-
-    H = model.fit(
-        train_batches.take(1),
-        validation_data=val_batches.take(1),
-        epochs=10)
-
-    print(H)
-# testDs =
-# # show the accuracy on the testing set
-# (loss, accuracy) = model.evaluate(testDS)
-# print("[INFO] accuracy: {:.2f}%".format(accuracy * 100))

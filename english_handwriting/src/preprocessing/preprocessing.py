@@ -343,13 +343,26 @@ def preprocess_data(print_progress: bool = False):
         print('Encode labels\t',
               time.time() - time_start, "seconds")
 
-    # create a tf.data.Dataset and save it as a csv file
+    # create a tf.data.Dataset
+    # train_data = tf.data.Dataset.from_tensor_slices(
+    #     (train_imgs, encoded_train_labels))
+    # val_data = tf.data.Dataset.from_tensor_slices(
+    #     (val_imgs, encoded_val_labels))
+    # test_data = tf.data.Dataset.from_tensor_slices(
+    #     (test_imgs, encoded_test_labels))
     train_data = tf.data.Dataset.from_tensor_slices(
-        (train_imgs, encoded_train_labels))
+        ({'ex_img': train_imgs, 'label': encoded_train_labels},
+         encoded_train_labels)
+    )
     val_data = tf.data.Dataset.from_tensor_slices(
-        (val_imgs, encoded_val_labels))
+        ({'ex_img': train_imgs, 'label': encoded_val_labels},
+         encoded_val_labels)
+    )
     test_data = tf.data.Dataset.from_tensor_slices(
-        (test_imgs, encoded_test_labels))
+        ({'ex_img': train_imgs, 'label': encoded_test_labels},
+         encoded_test_labels)
+    )
+
     if print_progress:
         print('Create dataset\t',
               time.time() - time_start, "seconds")
@@ -405,6 +418,7 @@ def preprocess(print_progress=False):
         print('Creating batches')
 
     # create batches
+
     train_batches = train_data.batch(BATCH_SIZE).cache().prefetch(
         buffer_size=AUTOTUNE)
     val_batches = val_data.batch(BATCH_SIZE).cache().prefetch(
@@ -413,6 +427,7 @@ def preprocess(print_progress=False):
         buffer_size=AUTOTUNE)
 
     return train_batches, val_batches, test_batches, decoder
+    # return train_data, val_data, test_data, decoder
 
 
 if __name__ == '__main__':

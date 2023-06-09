@@ -67,12 +67,17 @@ class Model:
         pass
 
     def build_model(self, output_shape):
-        input_layer = keras.Input(shape=(self.img_height , self.img_width, 1), name="ex_img", dtype="float32")
-        labels = keras.Input(name='label', shape=output_shape, dtype="float32")
+        input_layer = keras.Input(shape=tuple([self.img_height, self.img_width, 1]), name="ex_img", dtype="float32")
+        labels = keras.Input(name='label', shape=(128, ), dtype="float32")
+
+        # print something from input layer and labels
+        print("input layer : ", input_layer)
         print("label :", labels)
+
+
         # 1st CNN layer
         # keras CONV2D filter cause 2 channels
-        output = apply_cnn(64, (3, 3), (1, 1), 'same', input_layer )
+        output = apply_cnn(64, (3, 3), (1, 1), 'same', input_layer)
         # 1st maxpool
         print("frst: ", output.shape)
         output = apply_max_pool((2, 2), (2, 2), output)
@@ -96,20 +101,24 @@ class Model:
         output = keras.layers.Reshape((output.shape[1]*output.shape[2], output.shape[3]), input_shape=output.shape)(output)
         # output = keras.layers.Flatten()(output)
         # output = keras.layers.Dense(512)(output)
-        print("flattened : ", output.shape)
+        # print("flattened : ", output.shape)
         # output = Bidirectional(LSTM(256, return_sequences=True), input_shape=(n_timesteps, 1))
         output = apply_BLSTM(256, output)
         output = apply_BLSTM(256, output)
         print("bidire : ", output.shape)
-        output = keras.layers.Flatten()(output)
-        print("flat: ", output.shape)
+        # output = keras.layers.Flatten()(output)
+        # print("flat: ", output.shape)
         # +2 is to account for the two special tokens introduced by the CTC loss.
-        output = keras.layers.Dense(output_shape , activation="softmax")(output)
+        output = keras.layers.Dense(output_shape, activation="softmax")(output)
         print("final : ", output.shape)
-        output = CTCLayer()(labels, output)
+        y = CTCLayer()(labels, output)
 
-        model = keras.models.Model(
-            inputs=input_layer, output=output, name="test_model_v1"
+        print("type of input layer : ", type(input_layer))
+        print("type of labels : ", type(labels))
+        print("type of y : ", type(y))
+
+        model = keras.Model(
+            inputs=[input_layer, labels], outputs=y, name="test_model_v1"
         )
 
         opt = keras.optimizers.Adam()
@@ -119,8 +128,3 @@ class Model:
         return model
 
 
-# if __name__ == '__main__':
-#
-#     ex_model = Model().build_model()
-#     ex_model.summary()
-#
