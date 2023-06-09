@@ -1,9 +1,13 @@
 import os
+import time
+
 import cv2
 import numpy as np
 
-PREPROCESS_DIR = "../data/"
-SOURCE_DATA = "../data/IAM-data/"
+from util.utils import set_working_dir
+from util.global_params import IMAGES_PATH, BINARIZED_IMAGES_PATH
+
+DATA_PATH = "data/"
 
 
 def assert_dir(dir):
@@ -53,17 +57,23 @@ def binarize_images(inputdir, outputdir):
         print("Finished binarize: " + os.path.basename(subdir))
 
 
-def preprocessing():
+def binarize(show_progress=False):
 
-    assert_dir(PREPROCESS_DIR)
+    assert_dir(DATA_PATH)
+    assert_dir(BINARIZED_IMAGES_PATH)
 
-    binarized_dir = os.path.join(PREPROCESS_DIR, "binarized")
-    assert_dir(binarized_dir)
+    time_start = time.time()
+    if show_progress:
+        print("Starting binarize")
 
-    print("Starting binarize")
-    binarize_images(SOURCE_DATA, binarized_dir)
-    print("Finished binarize")
+    binarize_images(IMAGES_PATH, BINARIZED_IMAGES_PATH)
+
+    if show_progress:
+        print("Finished binarize in " + str(time.time() - time_start) + " seconds")
 
 
-if __name__ == "__main__":
-    preprocessing()
+if __name__ == '__main__':
+    # change working dir to root of project
+    set_working_dir(os.path.abspath(__file__))
+
+    binarize(show_progress=True)

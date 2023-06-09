@@ -1,33 +1,10 @@
-import os
 import time
-import tensorflow as tf
 import pandas as pd
-from sklearn.model_selection import train_test_split
 import numpy as np
-from keras.src.layers import StringLookup
-
-AUTOTUNE = tf.data.AUTOTUNE
-
-# Relative path to the dataset
-iam_lines_path = os.path.join('IAM-data', 'iam_lines_gt.txt')
-
-# Relative path to the images
-img_path = os.path.join('IAM-data', 'img')
-
-# Relative path to save the preprocessed data
-preprocessed_data_path = os.path.join('IAM-data', 'preprocessed_data')
-
-# parameters
-max_len = 128
-padding_token = 99
-
-binarize_threshold = 0.7
-image_size = (64, 512)
-
-val_split = 0.2
-test_split = 0.2
-
-batch_size = 32
+from sklearn.model_selection import train_test_split
+from util.global_params import *
+from tensorflow.keras.layers import StringLookup
+from util.utils import set_working_dir
 
 
 def get_dataframe(path: str) -> pd.DataFrame:
@@ -68,8 +45,8 @@ def get_dataframe(path: str) -> pd.DataFrame:
 
 
 def split_data(df: pd.DataFrame,
-               val_split: float = val_split,
-               test_split: float = test_split
+               val_split: float = VAL_SPLIT,
+               test_split: float = TEST_SPLIT
                ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Split the dataframe into training, validation and test sets
@@ -104,13 +81,13 @@ def load_images(images_names: list[str]) -> list[tf.Tensor]:
 
     for image_file in images_names:
         # read the image from the filepath
-        file_path = os.path.join(img_path, image_file)
+        file_path = os.path.join(IMAGES_PATH, image_file)
         image = tf.io.read_file(file_path)
         image = tf.image.decode_image(image, channels=1)
         image = tf.cast(image, tf.float32) / 255.0
 
         # binarize the image
-        image = tf.where(image > binarize_threshold, 1, 0)
+        # image = tf.where(image > binarize_threshold, 1, 0)
 
         images.append(image)
 
@@ -118,7 +95,7 @@ def load_images(images_names: list[str]) -> list[tf.Tensor]:
 
 
 def resize_images(images: list[tf.Tensor],
-                  size: tuple[int, int] = image_size) -> list[tf.Tensor]:
+                  size: tuple[int, int] = IMAGE_SIZE) -> list[tf.Tensor]:
     """
     Resize the images to the specified shape
     :param images: list[tf.Tensor]
@@ -181,7 +158,7 @@ def get_vocabulary(labels: list[str]) -> tuple[list[str], int]:
             max_label_len = len(label)
 
     vocab = sorted(vocab)
-    max_label_len = max(max_label_len, max_len)
+    max_label_len = max(max_label_len, MAX_LEN)
 
     return vocab, max_label_len
 
@@ -231,15 +208,30 @@ def encode_labels(labels: list[str], encoder: StringLookup,
         pad_amount = max_label_len - length
         encoded_label = tf.pad(
             encoded_label, paddings=[[0, pad_amount]],
-            constant_values=padding_token)
+            constant_values=PADDING_TOKEN)
 
         padded_labels.append(encoded_label)
 
     return padded_labels
 
 
+def get_decoder(decoder_vocab: list[str]) -> StringLookup:
+    """
+    Decode the label
+    :param decoder_vocab: list[str]
+        Decoder vocabulary
+    :return: str
+        Decoded label
+    """
+    # get the decoder
+    decoder = StringLookup(vocabulary=decoder_vocab,
+                           mask_token=None, invert=True)
+
+    return decoder
+
+
 def save_dataset(dataset: tf.data.Dataset,
-                 name: str, path: str = preprocessed_data_path):
+                 name: str, path: str = PREPROCESSED_DATA_PATH):
     """
     Save the dataset to the specified path as a csv file
     :param dataset: tf.data.Dataset
@@ -271,7 +263,7 @@ def get_data_path(folder: str) -> str:
     :return: str
         Path to the preprocessed data
     """
-    return os.path.join(preprocessed_data_path, folder)
+    return os.path.join(PREPROCESSED_DATA_PATH, folder)
 
 
 def load_decoder(path: str) -> list[str]:
@@ -290,9 +282,9 @@ def load_decoder(path: str) -> list[str]:
     return decoder
 
 
-def save_decoder(decoder: list[str], path: str):
+def save_decoder_vocab(decoder: list[str], path: str):
     """
-    Save the decoder
+    Save the vocabulary for the decoder
     :param decoder: list[str]
         Decoder
     :param path: str
@@ -309,12 +301,11 @@ def preprocess_data(print_progress: bool = False):
     """
     time_start = time.time()
     if print_progress:
-        print('Preprocessing data...')
         print('Task\t\t\tTime elapsed (seconds)')
         print('----------------------------------')
 
     # read the lines file
-    df = get_dataframe(iam_lines_path)
+    df = get_dataframe(IAM_LINES_PATH)
     if print_progress:
         print('Read lines file\t',
               time.time() - time_start)
@@ -341,7 +332,6 @@ def preprocess_data(print_progress: bool = False):
 
     # encode the labels
     encoder, decoder = get_encoding(vocab)
-    decoder_vocab = decoder.get_vocabulary()
 
     encoded_train_labels = encode_labels(
         train_df['label'].values, encoder, max_label_len)
@@ -364,52 +354,69 @@ def preprocess_data(print_progress: bool = False):
         print('Create dataset\t',
               time.time() - time_start, "seconds")
 
-    return train_data, val_data, test_data, decoder_vocab
+    return train_data, val_data, test_data, decoder
 
 
-def main():
+def preprocess(print_progress=False):
+    """
+    Preprocess the data
+    """
+    if print_progress:
+        print('Preprocessing data')
+
     train_path = get_data_path('train')
     val_path = get_data_path('val')
     test_path = get_data_path('test')
-    decoder_path = get_data_path('decoder.txt')
+    vocab_path = get_data_path('vocab.txt')
 
     # check if the dataset has already been preprocessed
     if os.path.exists(train_path) and os.path.exists(val_path) and \
-            os.path.exists(test_path) and os.path.exists(decoder_path):
+            os.path.exists(test_path) and os.path.exists(vocab_path):
+
+        if print_progress:
+            print('Loading preprocessed data')
 
         train_data = tf.data.Dataset.load(train_path)
         val_data = tf.data.Dataset.load(val_path)
         test_data = tf.data.Dataset.load(test_path)
 
         # load the decoder
-        decoder_vocab = load_decoder(decoder_path)
+        decoder_vocab = load_decoder(vocab_path)
+        decoder = get_decoder(decoder_vocab)
 
     else:
-        train_data, val_data, test_data, decoder_vocab = \
-            preprocess_data(print_progress=True)
+        train_data, val_data, test_data, decoder = \
+            preprocess_data(print_progress=print_progress)
 
         # save the datasets
 
         # create dir if it doesn't exist
-        if not os.path.exists(preprocessed_data_path):
-            os.makedirs(preprocessed_data_path)
+        if not os.path.exists(PREPROCESSED_DATA_PATH):
+            os.makedirs(PREPROCESSED_DATA_PATH)
 
         train_data.save(train_path)
         val_data.save(val_path)
         test_data.save(test_path)
 
         # save the decoder
-        save_decoder(decoder_vocab, decoder_path)
+        save_decoder_vocab(decoder.get_vocabulary(), vocab_path)
+
+    if print_progress:
+        print('Creating batches')
 
     # create batches
-    train_batches = train_data.batch(batch_size).cache().prefetch(
+    train_batches = train_data.batch(BATCH_SIZE).cache().prefetch(
         buffer_size=AUTOTUNE)
-    val_batches = val_data.batch(batch_size).cache().prefetch(
+    val_batches = val_data.batch(BATCH_SIZE).cache().prefetch(
         buffer_size=AUTOTUNE)
-    test_batches = test_data.batch(batch_size).cache().prefetch(
+    test_batches = test_data.batch(BATCH_SIZE).cache().prefetch(
         buffer_size=AUTOTUNE)
 
-    return train_batches, val_batches, test_batches, decoder_vocab
+    return train_batches, val_batches, test_batches, decoder
 
 
-main()
+if __name__ == '__main__':
+    # change working dir to root of project
+    set_working_dir(os.path.abspath(__file__))
+
+    preprocess(print_progress=True)
