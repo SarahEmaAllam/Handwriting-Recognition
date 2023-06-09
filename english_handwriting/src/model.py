@@ -27,7 +27,7 @@ def apply_cnn(features, kernel, stride, padding, x):
 
 
 def apply_BLSTM(hidden, x):
-    return keras.layers.Bidirectional(keras.layers.LSTM(hidden))(x)
+    return keras.layers.Bidirectional(keras.layers.LSTM(hidden, return_sequences=True))(x)
 
 
 def apply_twice_bn(x):
@@ -41,11 +41,13 @@ class CTCLayer(keras.layers.Layer):
         self.loss_fn = tf.nn.ctc_loss
 
     def call(self, y_true, y_pred):
+        print("y_true " , y_true)
+        print("y_pred : " , y_pred)
         batch_len = tf.cast(tf.shape(y_true[0]), dtype="int64")
-        input_length = tf.cast(tf.shape(y_pred)[1], dtype="int64")
+        input_length = tf.cast(tf.shape(y_pred)[1], dtype="float32")
         label_length = tf.cast(tf.shape(y_true)[1], dtype="int64")
 
-        input_length = input_length * tf.ones(shape=(batch_len, 1), dtype="int64")
+        input_length = input_length * tf.ones(shape=(batch_len, 1), dtype="float32")
         label_length = label_length * tf.ones(shape=(batch_len, 1), dtype="int64")
         loss = self.loss_fn(y_true, y_pred, input_length, label_length)
         self.add_loss(loss)
@@ -60,13 +62,13 @@ class Model:
     def __int__(self):
         pass
 
-    def build_model(self):
-        inp_img = keras.Input(shape=(self.img_height , self.img_width, 1), name="ex_img", dtype="float32")
-        labels = keras.Input(name='label', shape=(None,), dtype="float32")
-
+    def build_model(self, output_shape):
+        input_layer = keras.Input(shape=(self.img_height , self.img_width, 1), name="ex_img", dtype="float32")
+        labels = keras.Input(name='label', shape=output_shape, dtype="float32")
+        print("label :", labels)
         # 1st CNN layer
         # keras CONV2D filter cause 2 channels
-        output = apply_cnn(64, (3, 3), (1, 1), 'same', inp_img)
+        output = apply_cnn(64, (3, 3), (1, 1), 'same', input_layer )
         # 1st maxpool
         print("frst: ", output.shape)
         output = apply_max_pool((2, 2), (2, 2), output)
@@ -87,16 +89,20 @@ class Model:
         # sth flattening
         print(output.shape)
         # flatten
-        output = keras.layers.Flatten(output)
+        output = keras.layers.Reshape((output.shape[1]*output.shape[2], output.shape[3]), input_shape=output.shape)(output)
+        # output = keras.layers.Flatten()(output)
+        # output = keras.layers.Dense(512)(output)
         print("flattened : ", output.shape)
+        # output = Bidirectional(LSTM(256, return_sequences=True), input_shape=(n_timesteps, 1))
         output = apply_BLSTM(256, output)
         output = apply_BLSTM(256, output)
-
-        output = keras.layers.Dense(activation="softmax")
-        output = CTCLayer(name="ctc_loss")(labels, output)
+        print("bidire : ", output.shape)
+        output = keras.layers.Dense(output_shape , activation="softmax")(output)
+        print("final : ", output.shape)
+        output = CTCLayer()(labels, output)
 
         model = keras.models.Model(
-            inputs=[inp_img, labels], output=output, name="test_model_v1"
+            inputs=input_layer, output=output, name="test_model_v1"
         )
 
         opt = keras.optimizers.Adam()

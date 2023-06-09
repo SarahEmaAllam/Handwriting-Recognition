@@ -104,11 +104,12 @@ def test():
     # model.compile(loss="sparse_categorical_crossentropy", optimizer="sgd",
     #               metrics=["accuracy"])
 
-    model = Model().build_model()
-    # train the model
-    print("[INFO] training model...")
-
     train_batches, val_batches, test_batches, decoder = preprocessing.preprocess()
+    print("[INFO] training model...")
+    print("train batch ", train_batches.take(1))
+    model = Model().build_model(len(decoder.get_vocabulary()) + 2)
+    # train the model
+
     H = model.fit(
         train_batches.take(1),
         validation_data=val_batches.take(1),
