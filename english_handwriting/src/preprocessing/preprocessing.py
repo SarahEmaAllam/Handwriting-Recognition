@@ -355,11 +355,11 @@ def preprocess_data(print_progress: bool = False):
          encoded_train_labels)
     )
     val_data = tf.data.Dataset.from_tensor_slices(
-        ({'ex_img': train_imgs, 'label': encoded_val_labels},
+        ({'ex_img': val_imgs, 'label': encoded_val_labels},
          encoded_val_labels)
     )
     test_data = tf.data.Dataset.from_tensor_slices(
-        ({'ex_img': train_imgs, 'label': encoded_test_labels},
+        ({'ex_img': test_imgs, 'label': encoded_test_labels},
          encoded_test_labels)
     )
 

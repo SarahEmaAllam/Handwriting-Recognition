@@ -1,9 +1,11 @@
+import datetime
+
 import tensorflow as tf
 from tensorflow import keras
 import numpy as np
-from util.global_params import BATCH_SIZE, MAX_LEN
+from util.global_params import MAX_LEN
 from preprocessing import preprocessing
-from model import Model
+from model2 import Model
 from data_agumentation import augment_img
 
 
@@ -53,10 +55,12 @@ def test():
     print("[INFO] initializing model...")
     print("[INFO] compiling model...")
 
-    train_batches, val_batches, test_batches, decoder = preprocessing.preprocess()
+    train_batches, val_batches, test_batches, decoder = preprocessing.preprocess(True)
     print("[INFO] training model...")
 
-    model = Model().build_model(len(decoder.get_vocabulary()) + 2)
+    output_shape = decoder.vocab_size() + 2
+
+    model = Model().build_model(output_shape)
     prediction_model = keras.models.Model(
         model.get_layer(name="ex_img").input, model.get_layer(name="dense").output
     )
@@ -71,11 +75,16 @@ def test():
     edit_distance_callback = EditDistanceCallback(
         prediction_model, validation_images, validation_labels)
 
+    log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir,
+                                                          histogram_freq=1)
+
     # train the model
     H = model.fit(
         train_batches,
         validation_data=val_batches,
         epochs=10,
-        callbacks=[edit_distance_callback])
+        callbacks=[edit_distance_callback, tensorboard_callback]
+    )
 
     print(H)

@@ -67,13 +67,13 @@ class Model:
         pass
 
     def build_model(self, output_shape):
-        input_layer = keras.Input(shape=tuple([self.img_height, self.img_width, 1]), name="ex_img", dtype="float32")
+        input_layer = keras.Input(shape=(self.img_height, self.img_width, 1),
+                                  name="ex_img", dtype="float32")
         labels = keras.Input(name='label', shape=(128, ), dtype="float32")
 
         # print something from input layer and labels
         print("input layer : ", input_layer)
         print("label :", labels)
-
 
         # 1st CNN layer
         # keras CONV2D filter cause 2 channels
@@ -98,24 +98,14 @@ class Model:
         # sth flattening
         print(output.shape)
         # flatten
-        output = keras.layers.Reshape((output.shape[1]*output.shape[2], output.shape[3]), input_shape=output.shape)(output)
-        # output = keras.layers.Flatten()(output)
-        # output = keras.layers.Dense(512)(output)
-        # print("flattened : ", output.shape)
-        # output = Bidirectional(LSTM(256, return_sequences=True), input_shape=(n_timesteps, 1))
+        output = keras.layers.Reshape(
+            (output.shape[1] * output.shape[2], output.shape[3]),
+            input_shape=output.shape)(output)
         output = apply_BLSTM(256, output)
         output = apply_BLSTM(256, output)
-        print("bidire : ", output.shape)
-        # output = keras.layers.Flatten()(output)
-        # print("flat: ", output.shape)
-        # +2 is to account for the two special tokens introduced by the CTC loss.
         output = keras.layers.Dense(output_shape, activation="softmax")(output)
-        print("final : ", output.shape)
-        y = CTCLayer()(labels, output)
 
-        print("type of input layer : ", type(input_layer))
-        print("type of labels : ", type(labels))
-        print("type of y : ", type(y))
+        y = CTCLayer()(labels, output)
 
         model = keras.Model(
             inputs=[input_layer, labels], outputs=y, name="test_model_v1"
@@ -123,8 +113,8 @@ class Model:
 
         opt = keras.optimizers.Adam()
         model.compile(optimizer=opt)
-        # Transcription layer -Transcription is the process of converting the per-frame predictions made by RNN into a label sequence.
-        # translate the per-frame predictions by the recurrent layers into a label sequence
+        model.summary()
+
         return model
 
 
