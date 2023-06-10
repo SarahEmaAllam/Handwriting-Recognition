@@ -2,6 +2,7 @@ import random
 import cv2
 import numpy as np
 import albumentations as A
+import tensorflow as tf
 
 
 # gets PIL image and returns augmented PIL image
@@ -62,6 +63,31 @@ def augment_img(img):
     # image = Image.fromarray(img)
     return img
 
+
+def custom_generator(data, batch_size):
+    while True:
+        batch_images = []
+        batch_labels = []
+
+        # Generate a batch of augmented images and labels
+        for image, label in data:
+            augmented_image = augment_img(image)
+
+            batch_images.append(augmented_image)
+            batch_labels.append(label)
+
+            if len(batch_images) == batch_size:
+                yield np.array(batch_images), np.array(batch_labels)
+                batch_images = []
+                batch_labels = []
+
+
+def get_data_augmentation():
+    return tf.keras.Sequential([
+        tf.keras.layers.experimental.preprocessing.RandomFlip("horizontal"),
+        tf.keras.layers.experimental.preprocessing.RandomRotation(0.2),
+        tf.keras.layers.experimental.preprocessing.RandomZoom(0.2),
+    ])
 
 # def augment_using_ops(images, labels):
 # 	# randomly flip the images horizontally, randomly flip the images

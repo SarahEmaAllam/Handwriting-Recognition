@@ -5,7 +5,8 @@ from tensorflow import keras
 import numpy as np
 from util.global_params import MAX_LEN
 from preprocessing import preprocessing
-from model2 import Model
+from model import Model
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from data_agumentation import augment_img
 
 
@@ -65,6 +66,11 @@ def test():
         model.get_layer(name="ex_img").input, model.get_layer(name="dense").output
     )
 
+    # Augment the training data
+    data_generator = ImageDataGenerator(
+
+
+    # Validation data for the EditDistanceCallback.
     validation_images = []
     validation_labels = []
 
@@ -80,11 +86,15 @@ def test():
                                                           histogram_freq=1)
 
     # train the model
-    H = model.fit(
+    history = model.fit(
         train_batches,
         validation_data=val_batches,
         epochs=10,
         callbacks=[edit_distance_callback, tensorboard_callback]
     )
 
-    print(H)
+    print(history)
+
+    # save the model to disk
+    print("[INFO] serializing network...")
+    model.save("model.h5", save_format="h5")
