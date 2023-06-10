@@ -8,13 +8,15 @@ from PIL import Image
 
 # gets PIL image and returns augmented PIL image
 def augment_img(img: tf.Tensor):
+
     # only augment 3/4th the images
     if random.randint(1, 4) > 3:
         return img
 
+    # print(img)
+    # img = tf.make_ndarray(img.op.get_attr('value'))
     img = img.numpy()
     # img = np.asarray(img)  # convert to numpy for opencv
-    print(img.dtype)
 
     # morphological alterations
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))

@@ -358,28 +358,6 @@ def preprocess_data(print_progress: bool = False):
         print('Encode labels\t',
               time.time() - time_start, "seconds")
 
-    # create a tf.data.Dataset
-    # train_data = tf.data.Dataset.from_tensor_slices(
-    #     (train_imgs, encoded_train_labels))
-    # val_data = tf.data.Dataset.from_tensor_slices(
-    #     (val_imgs, encoded_val_labels))
-    # test_data = tf.data.Dataset.from_tensor_slices(
-    #     (test_imgs, encoded_test_labels))
-
-
-    # train_data = tf.data.Dataset.from_tensor_slices(
-    #     ({'ex_img': train_imgs, 'label': encoded_train_labels},
-    #      encoded_train_labels)
-    # )
-    # val_data = tf.data.Dataset.from_tensor_slices(
-    #     ({'ex_img': val_imgs, 'label': encoded_val_labels},
-    #      encoded_val_labels)
-    # )
-    # test_data = tf.data.Dataset.from_tensor_slices(
-    #     ({'ex_img': test_imgs, 'label': encoded_test_labels},
-    #      encoded_test_labels)
-    # )
-
     train_data = tf.data.Dataset.from_generator(
         lambda: generator(train_imgs, encoded_train_labels),
         output_signature=(
@@ -464,8 +442,6 @@ def preprocess(print_progress=False):
     if print_progress:
         print('Creating batches and augmenting data')
 
-    # create batches
-
     train_batches = train_data.batch(BATCH_SIZE).cache().prefetch(
         buffer_size=AUTOTUNE)
 
@@ -475,14 +451,14 @@ def preprocess(print_progress=False):
     print("Batch Length Before Augmentation:", batch_length_before)
 
     # augment the data
-    # augmented_images_batches = train_batches.map(
-    #     lambda x: {'image': augment_img(x['image']), 'label': x['label']},
-    #     num_parallel_calls=AUTOTUNE)
-    # train_batches = train_batches.concatenate(augmented_images_batches)
-    # # Calculate the length of the batch after augmentation
-    # batch_length_after = tf.data.experimental.cardinality(
-    #     train_batches).numpy() * BATCH_SIZE
-    # print("Batch Length After Augmentation:", batch_length_after)
+    augmented_images_batches = train_batches.map(
+        lambda x: {'image': augment_img(x['image']), 'label': x['label']},
+        num_parallel_calls=AUTOTUNE)
+    train_batches = train_batches.concatenate(augmented_images_batches)
+    # Calculate the length of the batch after augmentation
+    batch_length_after = tf.data.experimental.cardinality(
+        train_batches).numpy() * BATCH_SIZE
+    print("Batch Length After Augmentation:", batch_length_after)
 
     val_batches = val_data.batch(BATCH_SIZE).cache().prefetch(
         buffer_size=AUTOTUNE)
@@ -496,5 +472,6 @@ def preprocess(print_progress=False):
 if __name__ == '__main__':
     # change working dir to root of project
     set_working_dir(os.path.abspath(__file__))
+    # tf.config.run_functions_eagerly(True)
 
     preprocess(print_progress=True)

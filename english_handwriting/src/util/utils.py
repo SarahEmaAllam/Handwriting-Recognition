@@ -11,7 +11,7 @@ def set_working_dir(current_file_path):
         root_dir = os.path.dirname(root_dir)
 
         if root_dir == '/':
-            raise Exception("Root dir not found")
+            raise Exception("Root dir not found. Comment the set_working_dir call and set the working dir manually.")
 
     # calculate the relative path from the current file to the root dir
     relative_path = os.path.relpath(current_file_path, start=root_dir)
