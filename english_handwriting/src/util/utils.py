@@ -17,7 +17,7 @@ def set_working_dir(current_file_path):
     relative_path = os.path.relpath(current_file_path, start=root_dir)
 
     # count the number of directories in the relative path
-    num_levels = relative_path.count(os.sep)
+    num_levels = len(relative_path.split(os.sep)) - 1
 
     # create the relative prefix
     relative_prefix = os.path.join(*(['..'] * num_levels))
