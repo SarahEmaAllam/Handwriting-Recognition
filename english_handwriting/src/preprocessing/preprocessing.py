@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 from util.global_params import *
 from tensorflow.keras.layers import StringLookup
 from util.utils import set_working_dir
-
+from data_agumentation import augment_img
 
 def get_dataframe(path: str) -> pd.DataFrame:
     """
@@ -421,6 +421,7 @@ def preprocess(print_progress=False):
 
     train_batches = train_data.batch(BATCH_SIZE).cache().prefetch(
         buffer_size=AUTOTUNE)
+    train_batches = train_batches.map(lambda x,y: (augment_img(x), y),num_parallel_calls = AUTOTUNE)
     val_batches = val_data.batch(BATCH_SIZE).cache().prefetch(
         buffer_size=AUTOTUNE)
     test_batches = test_data.batch(BATCH_SIZE).cache().prefetch(
