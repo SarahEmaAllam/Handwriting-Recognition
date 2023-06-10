@@ -7,6 +7,7 @@ from tensorflow.keras.layers import StringLookup
 from util.utils import set_working_dir
 from data_agumentation import augment_img
 
+
 def get_dataframe(path: str) -> pd.DataFrame:
     """
     Extract the image path and the label from the IAM lines file and
@@ -131,7 +132,7 @@ def preprocess_images(images: list[str]) -> list[tf.Tensor]:
     :return: list[tf.Tensor]
         Preprocessed images
     """
-    # load the images and binarize them
+    # load the images
     images = load_images(images)
 
     # resize the images
@@ -140,7 +141,7 @@ def preprocess_images(images: list[str]) -> list[tf.Tensor]:
     return images
 
 
-def get_vocabulary(labels: list[str]) -> tuple[list[str], int]:
+def get_vocabulary_from_labels(labels: list[str]) -> tuple[list[str], int]:
     """
     Get the vocabulary from the labels and the maximum label length
     :param labels: list[str]
@@ -230,6 +231,20 @@ def get_decoder(decoder_vocab: list[str]) -> StringLookup:
     return decoder
 
 
+def generator(images: list[tf.Tensor], labels: list[tf.Tensor]) -> dict[str, tf.Tensor]:
+    """
+    Generator for the tf.data.Dataset
+    :param images: list[tf.Tensor]
+        List of images
+    :param labels: list[tf.Tensor]
+        List of labels
+    :return: dict[tf.Tensor, tf.Tensor]
+        Image and label
+    """
+    for img, label in zip(images, labels):
+        yield {"image": img, "label": label}
+
+
 def save_dataset(dataset: tf.data.Dataset,
                  name: str, path: str = PREPROCESSED_DATA_PATH):
     """
@@ -317,7 +332,7 @@ def preprocess_data(print_progress: bool = False):
               time.time() - time_start)
 
     # get the vocabulary from the training labels
-    vocab, max_label_len = get_vocabulary(train_df['label'].values)
+    vocab, max_label_len = get_vocabulary_from_labels(train_df['label'].values)
     if print_progress:
         print('Get vocabulary\t',
               time.time() - time_start)
@@ -350,17 +365,49 @@ def preprocess_data(print_progress: bool = False):
     #     (val_imgs, encoded_val_labels))
     # test_data = tf.data.Dataset.from_tensor_slices(
     #     (test_imgs, encoded_test_labels))
-    train_data = tf.data.Dataset.from_tensor_slices(
-        ({'ex_img': train_imgs, 'label': encoded_train_labels},
-         encoded_train_labels)
+
+
+    # train_data = tf.data.Dataset.from_tensor_slices(
+    #     ({'ex_img': train_imgs, 'label': encoded_train_labels},
+    #      encoded_train_labels)
+    # )
+    # val_data = tf.data.Dataset.from_tensor_slices(
+    #     ({'ex_img': val_imgs, 'label': encoded_val_labels},
+    #      encoded_val_labels)
+    # )
+    # test_data = tf.data.Dataset.from_tensor_slices(
+    #     ({'ex_img': test_imgs, 'label': encoded_test_labels},
+    #      encoded_test_labels)
+    # )
+
+    train_data = tf.data.Dataset.from_generator(
+        lambda: generator(train_imgs, encoded_train_labels),
+        output_signature=(
+            {
+                'image': tf.TensorSpec(shape=(None, None, 1), dtype=tf.float32),
+                'label': tf.TensorSpec(shape=(None,), dtype=tf.int64)
+            }
+        )
     )
-    val_data = tf.data.Dataset.from_tensor_slices(
-        ({'ex_img': val_imgs, 'label': encoded_val_labels},
-         encoded_val_labels)
+
+    val_data = tf.data.Dataset.from_generator(
+        lambda: generator(val_imgs, encoded_val_labels),
+        output_signature=(
+            {
+                'image': tf.TensorSpec(shape=(None, None, 1), dtype=tf.float32),
+                'label': tf.TensorSpec(shape=(None,), dtype=tf.int64)
+            }
+        )
     )
-    test_data = tf.data.Dataset.from_tensor_slices(
-        ({'ex_img': test_imgs, 'label': encoded_test_labels},
-         encoded_test_labels)
+
+    test_data = tf.data.Dataset.from_generator(
+        lambda: generator(test_imgs, encoded_test_labels),
+        output_signature=(
+            {
+                'image': tf.TensorSpec(shape=(None, None, 1), dtype=tf.float32),
+                'label': tf.TensorSpec(shape=(None,), dtype=tf.int64)
+            }
+        )
     )
 
     if print_progress:
@@ -415,13 +462,28 @@ def preprocess(print_progress=False):
         save_decoder_vocab(decoder.get_vocabulary(), vocab_path)
 
     if print_progress:
-        print('Creating batches')
+        print('Creating batches and augmenting data')
 
     # create batches
 
     train_batches = train_data.batch(BATCH_SIZE).cache().prefetch(
         buffer_size=AUTOTUNE)
-    train_batches = train_batches.map(lambda x,y: (augment_img(x), y),num_parallel_calls = AUTOTUNE)
+
+    # Calculate the length of the batch before augmentation
+    batch_length_before = tf.data.experimental.cardinality(
+        train_batches).numpy()
+    print("Batch Length Before Augmentation:", batch_length_before)
+
+    # augment the data
+    # augmented_images_batches = train_batches.map(
+    #     lambda x: {'image': augment_img(x['image']), 'label': x['label']},
+    #     num_parallel_calls=AUTOTUNE)
+    # train_batches = train_batches.concatenate(augmented_images_batches)
+    # # Calculate the length of the batch after augmentation
+    # batch_length_after = tf.data.experimental.cardinality(
+    #     train_batches).numpy() * BATCH_SIZE
+    # print("Batch Length After Augmentation:", batch_length_after)
+
     val_batches = val_data.batch(BATCH_SIZE).cache().prefetch(
         buffer_size=AUTOTUNE)
     test_batches = test_data.batch(BATCH_SIZE).cache().prefetch(

@@ -60,7 +60,7 @@ class Model:
 
     def build_model(self, num_classes):
         input_layer = keras.Input(shape=(self.img_height, self.img_width, 1),
-                                  name="ex_img", dtype="float32")
+                                  name="image", dtype="float32")
         labels = keras.Input(name='label', shape=(MAX_LEN, ), dtype="float32")
 
         # Convolutional layers
@@ -107,7 +107,7 @@ class Model:
         )
 
         # Compile the model and return
-        opt = keras.optimizers.Adam()
+        opt = tf.keras.optimizers.legacy.Adam()
         model.compile(optimizer=opt)
 
         model.summary()

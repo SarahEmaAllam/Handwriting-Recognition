@@ -2,15 +2,19 @@ import random
 import cv2
 import numpy as np
 import albumentations as A
+import tensorflow as tf
+from PIL import Image
 
 
 # gets PIL image and returns augmented PIL image
-def augment_img(img):
+def augment_img(img: tf.Tensor):
     # only augment 3/4th the images
     if random.randint(1, 4) > 3:
         return img
 
-    img = np.asarray(img)  # convert to numpy for opencv
+    img = img.numpy()
+    # img = np.asarray(img)  # convert to numpy for opencv
+    print(img.dtype)
 
     # morphological alterations
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
@@ -20,6 +24,8 @@ def augment_img(img):
     if random.randint(1, 6) == 1:
         # erosion because the image is not inverted
         img = cv2.dilate(img, kernel, iterations=random.randint(1, 1))
+
+    img = Image.fromarray(img)
 
     # noise introduction
     transform = A.Compose([
@@ -58,8 +64,10 @@ def augment_img(img):
         ], p=0.5),
         # A.Blur(blur_limit=5,p=0.25),
     ])
-    # img = transform(image=img)['image']
-    # image = Image.fromarray(img)
+    img = transform(image=img)
+
+    img = tf.convert_to_tensor(img)
+
     return img
 
 

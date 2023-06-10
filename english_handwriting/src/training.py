@@ -52,31 +52,27 @@ class EditDistanceCallback(keras.callbacks.Callback):
         )
 
 
-def test():
+def train():
     print("[INFO] initializing model...")
     print("[INFO] compiling model...")
 
     train_batches, val_batches, test_batches, decoder = preprocessing.preprocess(True)
     print("[INFO] training model...")
 
-    output_shape = decoder.vocab_size() + 2
+    output_shape = decoder.vocabulary_size() + 2
 
     model = Model().build_model(output_shape)
     prediction_model = keras.models.Model(
-        model.get_layer(name="ex_img").input, model.get_layer(name="dense").output
+        model.get_layer(name="image").input, model.get_layer(name="dense").output
     )
-
-    # Augment the training data
-    data_generator = ImageDataGenerator(
-
 
     # Validation data for the EditDistanceCallback.
     validation_images = []
     validation_labels = []
 
     for batch in val_batches:
-        validation_images.append(batch[0])
-        validation_labels.append(batch[1])
+        validation_images.append(batch['image'])
+        validation_labels.append(batch['label'])
 
     edit_distance_callback = EditDistanceCallback(
         prediction_model, validation_images, validation_labels)
@@ -96,5 +92,5 @@ def test():
     print(history)
 
     # save the model to disk
-    print("[INFO] serializing network...")
+    print("[INFO] saving model...")
     model.save("model.h5", save_format="h5")
