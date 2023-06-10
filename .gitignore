@@ -3,6 +3,7 @@ deadsea_scrolls/data/
 IAM-data/
 boxes/
 datasets/
+logs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
