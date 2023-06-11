@@ -34,6 +34,8 @@ RUN_FOLDER = 'runs'
 MODEL_FOLDER = 'resources'
 STUDIES_FOLDER = 'studies'
 STORE_NAME = DET_MODEL_NAME + '_handwriting'
+PREDICTION_MODEL = 'resources/yolov8n_last.pt'
+PREDICTION_DIR = "results"
 
 # paths for preprocessing
 SOURCE_SYMBOLS = os.path.join(DATA_FOLDER, 'monkbrill')
