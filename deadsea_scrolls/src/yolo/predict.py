@@ -50,6 +50,11 @@ def predict(file_folder):
     # create current dir
     os.makedirs(prediction_dir)
 
+    #
+    yolo_predict_dir = os.path.join(RUN_FOLDER, "detect", "predict")
+    if os.path.exists(yolo_predict_dir):
+        hf.remove_directory(yolo_predict_dir)
+
     # predict all binarized images and print output to a txt file
     for file in os.listdir(file_folder):
 
@@ -57,7 +62,7 @@ def predict(file_folder):
 
             # do the prediction
             file_path = os.path.join(file_folder, file)
-            boxes = model.predict(file_path)[0].boxes.boxes.cpu().detach().numpy()
+            boxes = model.predict(file_path, save=True)[0].boxes.boxes.cpu().detach().numpy()
 
             # Calculate maximum bounding box height
             max_height = np.max(boxes[::, 3] - boxes[::, 1]) / 2
