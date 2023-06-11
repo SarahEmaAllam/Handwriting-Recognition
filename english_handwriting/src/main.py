@@ -1,49 +1,56 @@
 import os
-from preprocessing.binarization import binarize
-from preprocessing.preprocessing import preprocess_test_images
 
-from util.utils import set_working_dir
-from training import train
 import sys
 import argparse
-import tensorflow as tf
-from model import Model
-from tensorflow import keras
-from testing import decode_batch_predictions
+from preprocessing.preprocessing import preprocess_test_images
+from testing import testing
 
 
-# loads pre-trained and saved model from disk
-def load_model(model_path):
-    set_working_dir(os.path.abspath(__file__))
-    model = tf.keras.models.load_model(model_path,
-                                       custom_objects={'Model': Model})
-    return model
-
-
-# reads input from console; optional
 def parse():
+    """
+    Reads input either from console or as a python script
+    """
     parser = argparse.ArgumentParser()
-    parser.add_argument("--p", "--path", action="store_true", help="Path to line image")
+    parser.add_argument("--p", "--path", action="store_true",
+                        help="Path to line image")
     # args = parser.parse_args()
 
 
-# generates a txt file for each predicted line
-# saves file in 'results' directory
-# creates 'results' directory in parental directory if non-existent
-def text_to_file(text, name):
+def get_filenames(path):
+    """
+    Extract filenames from given directory
+    :param path: path to directory
+    :return: list of filenames
+    """
+    all_files = os.listdir(path)
+    filenames = []
+    for file in all_files:
+        f_name = os.path.basename(file)
+        filenames.append(os.path.splitext(f_name)[0])
+    return filenames
+
+
+def text_to_file(text, path):
+    """
+    Generates a txt file for each predicted line
+    Saves file in 'results' directory
+    Creates 'results' directory in parental directory if non-existent
+    :param text: list of predicted lines
+    :param filenames: list of filenames
+    """
+    # format: ./results/img_001_characters.txt
     save_path = './results'
-    if os.path.exists(save_path) is False:
+    filenames = get_filenames(path)
+    if not os.path.exists(save_path):
         os.mkdir(save_path)
     for idx, line in enumerate(text):
-        complete_path = os.path.join(save_path, name + str(idx + 1) + '.txt')
+        name = filenames[idx]
+        complete_path = os.path.join(save_path, name + '.txt')
         with open(complete_path, 'w') as f:
             f.write(f"{line}\n")
 
 
 if __name__ == '__main__':
-    MODEL_PATH = ''
-    set_working_dir(os.path.abspath(__file__))
-
     # reads input either from console or as a python script
     parse()
     if len(sys.argv) > 1:
@@ -54,20 +61,7 @@ if __name__ == '__main__':
     else:
         path = input("Path to line image:")
 
-    # loading pre-trained model from dsk
-    model = load_model(model_path=MODEL_PATH)
-    prediction_model = keras.models.Model(
-        model.get_layer(name="image").input,
-        model.get_layer(name="dense").output
-    )
+    images_names, test_images, decoder = preprocess_test_images(path)
+    outputs = testing(test_images, decoder)
+    text_to_file(outputs, path)
 
-    # pre-processing images for prediciton
-    proc_img, decoder = preprocess_test_images(path)
-    pred_batch = prediction_model.predict(proc_img)
-    predicted_text = []
-
-    # decoding and storing predicted lines as txt file
-    for img in pred_batch:
-        predicted_line = decode_batch_predictions(pred_batch, decoder)
-        predicted_text.append(predicted_line)
-    text_to_file(predicted_text, path)

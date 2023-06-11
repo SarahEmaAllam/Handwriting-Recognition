@@ -12,7 +12,7 @@ from tensorflow.python.data.ops.dataset_ops import DatasetV1, DatasetV2
 from util.global_params import *
 from tensorflow.keras.layers import StringLookup
 from util.utils import set_working_dir
-from data_agumentation import augment_img
+from preprocessing.data_agumentation import augment_img
 
 
 def get_dataframe(path: str) -> pd.DataFrame:
@@ -504,6 +504,10 @@ def preprocess(print_progress=False):
 def preprocess_test_images(test_path):
     vocab_path = 'data/preprocessed_data/vocab.txt'
 
+    # check if test_path exists
+    if not os.path.exists(test_path):
+        raise Exception('The test path does not exist')
+
     # read the images from the filepath
     images_names = os.listdir(test_path)
     images = preprocess_images(images_names)
@@ -518,7 +522,7 @@ def preprocess_test_images(test_path):
     images = images.batch(1).cache().prefetch(
         buffer_size=AUTOTUNE)
 
-    return images, decoder
+    return images_names, images, decoder
 
 
 if __name__ == '__main__':

@@ -50,7 +50,7 @@ class EditDistanceCallback(keras.callbacks.Callback):
         )
 
 
-def train():
+def train(continue_training=False):
     print("[INFO] initializing model...")
     print("[INFO] compiling model...")
 
@@ -60,7 +60,13 @@ def train():
 
     output_shape = decoder.vocabulary_size() + 2
 
-    model = Model().build_model(output_shape)
+    if continue_training:
+        model = tf.keras.models.load_model(
+            'logs/trained_models/model_59--226.47',
+            custom_objects={'Model': Model})
+    else:
+        model = Model().build_model(output_shape)
+
     prediction_model = keras.models.Model(
         model.get_layer(name="image").input,
         model.get_layer(name="dense").output
@@ -84,7 +90,7 @@ def train():
                                                           histogram_freq=1)
 
     checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
-        filepath='logs/trained_models_adadelta/model_{epoch:02d}--{val_loss:.2f}',
+        filepath='logs/trained_models/model_{epoch:02d}--{val_loss:.2f}',
         save_freq='epoch'
     )
 
@@ -97,7 +103,8 @@ def train():
             tensorboard_callback,
             checkpoint_callback,
             edit_distance_callback
-        ]
+        ],
+        initial_epoch=0 if not continue_training else 60
     )
 
     print(history)
@@ -105,3 +112,8 @@ def train():
     # save the model to disk
     print("[INFO] saving model...")
     model.save("model.keras")
+
+
+if __name__ == "__main__":
+
+    train(True)

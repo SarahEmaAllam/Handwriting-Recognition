@@ -44,10 +44,10 @@ def init_font():
                 'Zayin': 'z'}
 
 
-# Returns a grayscale image based on specified label of img_size
+# Returns a grayscale image based on specified true_label of img_size
 def create_image(label, img_size):
     if label not in char_map:
-        raise KeyError('Unknown label!')
+        raise KeyError('Unknown true_label!')
 
     # Create blank image and create a draw interface
     img = Image.new('L', img_size, 255)

@@ -63,11 +63,11 @@ def resize_data(image: Image.Image, width: int, height: int) -> Tuple[
 def save_coco_label(file: str, label_class: str, points: Box, data_folder: str,
                     folder: str):
     """
-    Saves the label of the image in coco format: classs, x_c, y_c, w, h
+    Saves the true_label of the image in coco format: classs, x_c, y_c, w, h
 
     Parameters
     ----------
-        file (str): Name of label (same as name of image)
+        file (str): Name of true_label (same as name of image)
         points (Box): x_c, y_c, w, h
         path (str): Path where image is saved
     """

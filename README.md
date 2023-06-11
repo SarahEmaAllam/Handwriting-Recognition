@@ -2,6 +2,7 @@
 
 ## Dead Sea Scrolls
 
-For the dead Sea Scrolls see the readme in the Dead Sea scrolls folder
+See the README file in the `deadsea_scrolls` folder
 
 ## IAM-Dataset
+See the README file in the `english_handwriting` folder

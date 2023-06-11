@@ -18,7 +18,7 @@ SCRIPT_NAME = 'test'
 
 def save_coco_label(points: Box):
     """
-    Saves the label of the image in coco format: classs, x_c, y_c, w, h
+    Saves the true_label of the image in coco format: classs, x_c, y_c, w, h
     """
     x_c = points[0]
     y_c = points[1]
@@ -75,4 +75,4 @@ with open('script-0.txt') as f:
         box = [x_c, y_c, w, h]
         draw_boxes(im, x_c, y_c, w, h)
         save_coco_label(box)
-# label = text[idx]
+# true_label = text[idx]

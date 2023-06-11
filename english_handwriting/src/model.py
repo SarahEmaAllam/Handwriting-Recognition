@@ -107,10 +107,8 @@ class Model:
         )
 
         # Compile the model and return
-        # opt = tf.keras.optimizers.legacy.Adam()
-
-        # TODO: try other optimizers (Adadelta is used in the paper)
-        opt = tf.keras.optimizers.legacy.Adadelta()
+        opt = tf.keras.optimizers.legacy.Adam()
+        # opt = tf.keras.optimizers.legacy.Adadelta()
         model.compile(optimizer=opt)
 
         model.summary()
