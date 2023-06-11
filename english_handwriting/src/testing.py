@@ -49,19 +49,20 @@ if __name__ == '__main__':
     train_batches, val_batches, test_batches, decoder = preprocess(
             True)
 
-    # predict the output on one of the test batches
-    for batch in test_batches.take(1):
-        predictions = model.predict(batch)
-        images, true_labels = batch['image'], batch['label']
-        predictions_text = decode_batch_predictions(predictions, decoder)
+    predictions_batches = model.predict(test_batches)
 
-        for i in range(4):
+    # predict the output on one of the test batches
+    for test_batch, pred_batch in zip(test_batches, predictions_batches):
+        images, true_labels = test_batch['image'], test_batch['label']
+        predictions_text = decode_batch_predictions(pred_batch, decoder)
+
+        for image, true_label, predicted_label in zip(images, true_labels, predictions_text):
             # print(decoder_vocab)
-            image = images[i]
+            # image = images[i]
             image = tf.keras.preprocessing.image.array_to_img(image)
 
-            true_label = true_labels[i]
-            predicted_label = str(predictions_text[i])
+            # true_label = true_labels[i]
+            # predicted_label = str(predictions_text[i])
 
             # Display the image using Matplotlib
             plt.imshow(image, cmap='gray')
