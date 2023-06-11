@@ -24,12 +24,12 @@ def load_model(model_path):
 def parse():
     parser = argparse.ArgumentParser()
     parser.add_argument("--p", "--path", action="store_true", help="Path to line image")
-    args = parser.parse_args()
+    # args = parser.parse_args()
 
 
 # generates a txt file for each predicted line
-# saves file in results diretory
-# creates directoray if non-existent
+# saves file in 'results' directory
+# creates 'results' directory in parental directory if non-existent
 def text_to_file(text, name):
     save_path = './results'
     if os.path.exists(save_path) is False:
@@ -43,6 +43,8 @@ def text_to_file(text, name):
 if __name__ == '__main__':
     MODEL_PATH = ''
     set_working_dir(os.path.abspath(__file__))
+
+    # reads input either from console or as a python script
     parse()
     if len(sys.argv) > 1:
         try:
@@ -52,21 +54,20 @@ if __name__ == '__main__':
     else:
         path = input("Path to line image:")
 
+    # loading pre-trained model from dsk
     model = load_model(model_path=MODEL_PATH)
-    proc_img, decoder = preprocess_test_images(path)
-
     prediction_model = keras.models.Model(
         model.get_layer(name="image").input,
         model.get_layer(name="dense").output
     )
 
+    # pre-processing images for prediciton
+    proc_img, decoder = preprocess_test_images(path)
     pred_batch = prediction_model.predict(proc_img)
     predicted_text = []
 
+    # decoding and storing predicted lines as txt file
     for img in pred_batch:
         predicted_line = decode_batch_predictions(pred_batch, decoder)
         predicted_text.append(predicted_line)
     text_to_file(predicted_text, path)
-    # change working dir to root of project
-    # os.chdir(os.path.dirname (os.path.abspath(__file__)))
-    # train()
