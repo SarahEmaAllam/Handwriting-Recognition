@@ -61,7 +61,7 @@ class Model:
     def build_model(self, num_classes):
         input_layer = keras.Input(shape=(self.img_height, self.img_width, 1),
                                   name="image", dtype="float32")
-        labels = keras.Input(name='label', shape=(MAX_LEN, ), dtype="float32")
+        labels = keras.Input(name='true_label', shape=(MAX_LEN, ), dtype="float32")
 
         # Convolutional layers
 
@@ -108,6 +108,9 @@ class Model:
 
         # Compile the model and return
         opt = tf.keras.optimizers.legacy.Adam()
+
+        # TODO: try other optimizers (Adadelta is used in the paper)
+        # opt = tf.keras.optimizers.legacy.Adadelta()
         model.compile(optimizer=opt)
 
         model.summary()

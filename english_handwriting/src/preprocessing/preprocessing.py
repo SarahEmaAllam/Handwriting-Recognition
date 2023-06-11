@@ -14,20 +14,20 @@ from data_agumentation import augment_img
 
 def get_dataframe(path: str) -> pd.DataFrame:
     """
-    Extract the image path and the label from the IAM lines file and
+    Extract the image path and the true_label from the IAM lines file and
     create a pandas dataframe
     :param path: str
         Path to the IAM lines file
     :return: pd.DataFrame
-        Dataframe containing the image path and the label
+        Dataframe containing the image path and the true_label
     """
     data = []
     image_path = None
     label = None
 
     # in the file, one line contains the image path,
-    # the next line the label, then an empty line
-    # extract the image path and the label and create a pandas dataframe
+    # the next line the true_label, then an empty line
+    # extract the image path and the true_label and create a pandas dataframe
     with open(path, 'r') as f:
         lines = f.readlines()
 
@@ -44,7 +44,7 @@ def get_dataframe(path: str) -> pd.DataFrame:
                 image_path = None
                 label = None
 
-    df = pd.DataFrame(data, columns=['image', 'label'])
+    df = pd.DataFrame(data, columns=['image', 'true_label'])
 
     return df
 
@@ -56,7 +56,7 @@ def split_data(df: pd.DataFrame,
     """
     Split the dataframe into training, validation and test sets
     :param df: pd.DataFrame
-        Dataframe containing the image path and the label
+        Dataframe containing the image path and the true_label
     :param val_split: float
         Validation split
     :param test_split: float
@@ -153,7 +153,7 @@ def augment_training_data(images: list[np.ndarray], labels: list[str]) -> tuple[
     # augment the training data
     # create a pandas dataframe from the images and labels
     df = pd.DataFrame({'image': images,
-                       'label': labels})
+                       'true_label': labels})
 
     augmented_images = []
     augmented_labels = []
@@ -169,20 +169,20 @@ def augment_training_data(images: list[np.ndarray], labels: list[str]) -> tuple[
             augmented_labels.append(label)
 
     augmented_df = pd.DataFrame({'image': augmented_images,
-                                 'label': augmented_labels})
+                                 'true_label': augmented_labels})
 
     new_df = pd.concat([df, augmented_df], ignore_index=True)
 
-    return new_df['image'].values, new_df['label'].values
+    return new_df['image'].values, new_df['true_label'].values
 
 
 def get_vocabulary_from_labels(labels: list[str]) -> tuple[list[str], int]:
     """
-    Get the vocabulary from the labels and the maximum label length
+    Get the vocabulary from the labels and the maximum true_label length
     :param labels: list[str]
         List of labels
     :return: tuple[list[str], int]
-        Vocabulary and maximum label length
+        Vocabulary and maximum true_label length
     """
 
     # get the vocabulary and the max len from the training labels
@@ -228,18 +228,18 @@ def encode_labels(labels: list[str], encoder: StringLookup,
     :param encoder: tf.lookup.StringLookup
         Encoder
     :param max_label_len: int
-        Maximum label length
+        Maximum true_label length
     :return: list[tf.Tensor]
         Encoded and padded labels
     """
     padded_labels = []
 
     for label in labels:
-        # encode the label
+        # encode the true_label
         encoded_label = encoder(
             tf.strings.unicode_split(label, input_encoding="UTF-8"))
 
-        # pad the label to the maximum length
+        # pad the true_label to the maximum length
         length = tf.shape(encoded_label)[0]
         pad_amount = max_label_len - length
         encoded_label = tf.pad(
@@ -253,11 +253,11 @@ def encode_labels(labels: list[str], encoder: StringLookup,
 
 def get_decoder(decoder_vocab: list[str]) -> StringLookup:
     """
-    Decode the label
+    Decode the true_label
     :param decoder_vocab: list[str]
         Decoder vocabulary
     :return: str
-        Decoded label
+        Decoded true_label
     """
     # get the decoder
     decoder = StringLookup(vocabulary=decoder_vocab,
@@ -275,10 +275,10 @@ def generator(images: list[np.ndarray], labels: list[tf.Tensor]) -> dict[
     :param labels: list[tf.Tensor]
         List of labels
     :return: dict[tf.Tensor, tf.Tensor]
-        Image and label
+        Image and true_label
     """
     for img, label in zip(images, labels):
-        yield {"image": img, "label": label}
+        yield {"image": img, "true_label": label}
 
 
 def save_dataset(dataset: tf.data.Dataset,
@@ -300,7 +300,7 @@ def save_dataset(dataset: tf.data.Dataset,
 
     # create a dataframe from the dataset
     df = pd.DataFrame(dataset.as_numpy_iterator(),
-                      columns=['image', 'label'])
+                      columns=['image', 'true_label'])
 
     # save the dataframe to a csv file
     df.to_csv(file_path, index=False)
@@ -317,7 +317,7 @@ def get_data_path(folder: str) -> str:
     return os.path.join(PREPROCESSED_DATA_PATH, folder)
 
 
-def load_decoder(path: str) -> list[str]:
+def load_vocab(path: str) -> list[str]:
     """
     Load the decoder
     :param path: str
@@ -325,12 +325,14 @@ def load_decoder(path: str) -> list[str]:
     :return: list[str]
         Decoder
     """
-    decoder = []
+    vocab = []
     with open(path, 'r') as f:
         for line in f:
-            decoder.append(line.strip())
-
-    return decoder
+            symbol = line.strip()
+            if symbol == '':
+                symbol = ' '
+            vocab.append(symbol)
+    return vocab
 
 
 def save_decoder_vocab(decoder: list[str], path: str):
@@ -368,7 +370,7 @@ def preprocess_data(print_progress: bool = False):
               time.time() - time_start)
 
     # get the vocabulary from the training labels
-    vocab, max_label_len = get_vocabulary_from_labels(train_df['label'].values)
+    vocab, max_label_len = get_vocabulary_from_labels(train_df['true_label'].values)
     if print_progress:
         print('Get vocabulary\t',
               time.time() - time_start)
@@ -386,7 +388,7 @@ def preprocess_data(print_progress: bool = False):
 
     # augment the training data
     train_imgs, train_labels = augment_training_data(
-        train_imgs, train_df['label'].values)
+        train_imgs, train_df['true_label'].values)
     train_imgs = resize_images(train_imgs)
     if print_progress:
         print('Augment training data\t',
@@ -395,9 +397,9 @@ def preprocess_data(print_progress: bool = False):
     encoded_train_labels = encode_labels(
         train_labels, encoder, max_label_len)
     encoded_val_labels = encode_labels(
-        val_df['label'].values, encoder, max_label_len)
+        val_df['true_label'].values, encoder, max_label_len)
     encoded_test_labels = encode_labels(
-        test_df['label'].values, encoder, max_label_len)
+        test_df['true_label'].values, encoder, max_label_len)
     if print_progress:
         print('Encode labels\t',
               time.time() - time_start, "seconds")
@@ -407,7 +409,7 @@ def preprocess_data(print_progress: bool = False):
         output_signature=(
             {
                 'image': tf.TensorSpec(shape=(IMAGE_SIZE[0], IMAGE_SIZE[1], 1), dtype=tf.float32),
-                'label': tf.TensorSpec(shape=(MAX_LEN,), dtype=tf.int64)
+                'true_label': tf.TensorSpec(shape=(MAX_LEN,), dtype=tf.int64)
             }
         )
     )
@@ -417,7 +419,7 @@ def preprocess_data(print_progress: bool = False):
         output_signature=(
             {
                 'image': tf.TensorSpec(shape=(None, None, 1), dtype=tf.float32),
-                'label': tf.TensorSpec(shape=(None,), dtype=tf.int64)
+                'true_label': tf.TensorSpec(shape=(None,), dtype=tf.int64)
             }
         )
     )
@@ -427,7 +429,7 @@ def preprocess_data(print_progress: bool = False):
         output_signature=(
             {
                 'image': tf.TensorSpec(shape=(None, None, 1), dtype=tf.float32),
-                'label': tf.TensorSpec(shape=(None,), dtype=tf.int64)
+                'true_label': tf.TensorSpec(shape=(None,), dtype=tf.int64)
             }
         )
     )
@@ -463,7 +465,7 @@ def preprocess(print_progress=False):
         test_data = tf.data.Dataset.load(test_path)
 
         # load the decoder
-        decoder_vocab = load_decoder(vocab_path)
+        decoder_vocab = load_vocab(vocab_path)
         decoder = get_decoder(decoder_vocab)
 
     else:

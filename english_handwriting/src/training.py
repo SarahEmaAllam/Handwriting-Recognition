@@ -72,7 +72,7 @@ def train():
 
     for batch in val_batches:
         validation_images.append(batch['image'])
-        validation_labels.append(batch['label'])
+        validation_labels.append(batch['true_label'])
 
     edit_distance_callback = EditDistanceCallback(
         prediction_model, validation_images, validation_labels)
@@ -84,7 +84,7 @@ def train():
                                                           histogram_freq=1)
 
     checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
-        filepath='trained/model_{epoch:02d}.h5',
+        filepath='logs/trained_models/model_{epoch:02d}--{val_loss:.2f}',
         save_freq='epoch'
     )
 
@@ -92,14 +92,16 @@ def train():
     history = model.fit(
         train_batches,
         validation_data=val_batches,
-        epochs=10,
-        callbacks=[edit_distance_callback,
-                   tensorboard_callback,
-                   checkpoint_callback]
+        epochs=100,
+        callbacks=[
+            tensorboard_callback,
+            checkpoint_callback,
+            edit_distance_callback
+        ]
     )
 
     print(history)
 
     # save the model to disk
     print("[INFO] saving model...")
-    model.save("model.h5", save_format="h5")
+    model.save("model.keras")
