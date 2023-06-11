@@ -1,6 +1,6 @@
-data/
-data/*
-data/**
+src/data/
+src/data/*
+src/data/**
 
 **/venv/
 **/venv/*
@@ -9,3 +9,5 @@ data/**
 **/.idea/
 **/.idea/*
 **/.idea/**
+/src/saved_model.pb
+/src/preprocessing/data/

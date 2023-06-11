@@ -7,7 +7,9 @@ import imageio.v2 as imageio
 import imgaug.augmenters as iaa
 from sklearn.model_selection import train_test_split
 from util.global_params import *
-from tensorflow.keras.layers import StringLookup
+import tensorflow as tf
+from tensorflow import keras
+from keras import layers
 from util.utils import set_working_dir
 from data_agumentation import augment_img
 
@@ -199,33 +201,41 @@ def get_vocabulary_from_labels(labels: list[str]) -> tuple[list[str], int]:
     return vocab, max_label_len
 
 
-def get_encoding(vocab: list[str]) -> tuple[StringLookup, StringLookup]:
+def get_encoding(vocab: list[str]) -> tuple[layers.StringLookup
+, layers.StringLookup
+]:
     """
     Get the encoding and decoding lookup tables
     :param vocab: list[str]
         Vocabulary
-    :return: tuple[tf.lookup.StringLookup, tf.lookup.StringLookup]
+    :return: tuple[tf.lookup.layers.StringLookup
+    , tf.lookup.layers.StringLookup
+    ]
         Encoding and decoding lookup tables
     """
 
     # Mapping characters to integers.
-    char_to_num = StringLookup(vocabulary=list(vocab), mask_token=None)
+    char_to_num = layers.StringLookup\
+        (vocabulary=list(vocab), mask_token=None)
 
     # Mapping integers back to original characters.
-    num_to_char = StringLookup(
+    num_to_char = layers.StringLookup\
+            (
         vocabulary=char_to_num.get_vocabulary(), mask_token=None, invert=True
     )
 
     return char_to_num, num_to_char
 
 
-def encode_labels(labels: list[str], encoder: StringLookup,
+def encode_labels(labels: list[str], encoder: layers.StringLookup
+                  ,
                   max_label_len: int) -> list[tf.Tensor]:
     """
     Encode the labels and pad them to the same length
     :param labels: list[str]
         List of labels
-    :param encoder: tf.lookup.StringLookup
+    :param encoder: tf.lookup.layers.StringLookup
+
         Encoder
     :param max_label_len: int
         Maximum label length
@@ -251,7 +261,8 @@ def encode_labels(labels: list[str], encoder: StringLookup,
     return padded_labels
 
 
-def get_decoder(decoder_vocab: list[str]) -> StringLookup:
+def get_decoder(decoder_vocab: list[str]) -> layers.StringLookup\
+        :
     """
     Decode the label
     :param decoder_vocab: list[str]
@@ -260,7 +271,8 @@ def get_decoder(decoder_vocab: list[str]) -> StringLookup:
         Decoded label
     """
     # get the decoder
-    decoder = StringLookup(vocabulary=decoder_vocab,
+    decoder = layers.StringLookup\
+        (vocabulary=decoder_vocab,
                            mask_token=None, invert=True)
 
     return decoder

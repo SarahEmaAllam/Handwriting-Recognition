@@ -63,6 +63,7 @@ def train():
     model = Model().build_model(output_shape)
     prediction_model = keras.models.Model(
         model.get_layer(name="image").input,
+        model.get_layer(name="dense").output,
         model.get_layer(name="dense").output
     )
 
@@ -87,12 +88,13 @@ def train():
         filepath='trained/model_{epoch:02d}.h5',
         save_freq='epoch'
     )
+    model.save_weights(checkpoint_callback)
 
     # train the model
     history = model.fit(
         train_batches,
         validation_data=val_batches,
-        epochs=10,
+        epochs=1,
         callbacks=[edit_distance_callback,
                    tensorboard_callback,
                    checkpoint_callback]
@@ -102,4 +104,7 @@ def train():
 
     # save the model to disk
     print("[INFO] saving model...")
-    model.save("model.h5", save_format="h5")
+    history.save('test_model')
+    #model.save("model.h5", save_format="h5")
+    #return model
+
