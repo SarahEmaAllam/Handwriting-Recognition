@@ -71,7 +71,7 @@ def evaluate():
     # os.chdir('../')
     # set_working_dir(os.path.abspath(__file__))
 
-    trained_model_path = 'logs/trained_models/model_59--226.47'
+    trained_model_path = 'resources/trained_models/model_61--232.73'
 
     # check if the path exists
     if not os.path.exists(trained_model_path):
@@ -143,7 +143,7 @@ def testing(test_data: list[tf.Tensor], decoder: StringLookup) -> list[str]:
     :param test_data: the test data
     :return: the predicted labels
     """
-    trained_model_path = 'logs/trained_models/model_51--207.72'
+    trained_model_path = 'resources/trained_models/model_61--232.73'
 
     # load the trained model
     # Load the model
