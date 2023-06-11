@@ -1,7 +1,11 @@
+from typing import List, Any
+
 import tensorflow as tf
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+import tensorflow as tf
+from keras.src.layers import StringLookup
 
 from model import Model
 from preprocessing.preprocessing import preprocess
@@ -25,8 +29,7 @@ def decode_batch_predictions(pred, decoder):
     return output_text
 
 
-if __name__ == '__main__':
-
+def evaluate():
     # change working dir to root of project (english_handwriting)
     # os.chdir('../')
     set_working_dir(os.path.abspath(__file__))
@@ -46,10 +49,15 @@ if __name__ == '__main__':
     # print the model summary
     model.summary()
 
+    prediction_model = keras.models.Model(
+        model.get_layer(name="image").input,
+        model.get_layer(name="dense").output
+    )
+
     train_batches, val_batches, test_batches, decoder = preprocess(
             True)
 
-    predictions_batches = model.predict(test_batches)
+    predictions_batches = prediction_model.predict(test_batches)
 
     # predict the output on one of the test batches
     for test_batch, pred_batch in zip(test_batches, predictions_batches):
@@ -81,3 +89,38 @@ if __name__ == '__main__':
             plt.show()
 
 
+def test(test_data: list[tf.Tensor], decoder: StringLookup) -> list[list[Any]]:
+    """
+    Test the model on the test data.
+    :param test_data: the test data
+    :return: the predicted labels
+    """
+    trained_model_path = 'logs/trained_models/model_51--207.72'
+
+    # load the trained model
+    # Load the model
+    model = keras.models.load_model(trained_model_path, compile=False)
+
+    print(model.summary())
+
+    # Remove the label tensor from the model architecture
+    # model.layers[0][-1].outbound_nodes = []
+
+    prediction_model = keras.models.Model(
+        model.get_layer(name="image").input,
+        model.get_layer(name="dense").output
+    )
+
+    pred_texts = []
+
+    for data in test_data:
+        # Predict the output using the new model
+        predictions = prediction_model.predict(data)
+
+        pred_texts.append(decode_batch_predictions(predictions, decoder))
+
+    return pred_texts
+
+
+if __name__ == '__main__':
+    evaluate()

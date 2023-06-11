@@ -501,32 +501,24 @@ def preprocess(print_progress=False):
     return train_batches, val_batches, test_batches, decoder
 
 
-def preprocess_test_data(path: str) -> tuple[DatasetV1 | DatasetV2, StringLookup]:
-    """
-    Preprocess the test data
-    """
-    test_df = get_dataframe(path)
-    vocab_path = get_data_path('vocab.txt')
+def preprocess_test_images(test_path):
+    vocab_path = 'data/preprocessed_data/vocab.txt'
 
-    test_imgs = preprocess_images(test_df['image'].values)
+    # read the images from the filepath
+    images_names = os.listdir(test_path)
+    images = preprocess_images(images_names)
 
-    # encode the labels
+    # load the vocabulary
     vocab = load_vocab(vocab_path)
-    encoder, decoder = get_encoding(vocab)
-    encoded_test_labels = encode_labels(
-        test_df['true_label'].values, encoder, MAX_LEN)
+    _, decoder = get_encoding(vocab)
 
-    test_data = tf.data.Dataset.from_generator(
-        lambda: generator(test_imgs, encoded_test_labels),
-        output_signature=(
-            {
-                'image': tf.TensorSpec(shape=(None, None, 1), dtype=tf.float32),
-                'true_label': tf.TensorSpec(shape=(None,), dtype=tf.int64)
-            }
-        )
-    )
+    # convert to tf dataset
+    images = tf.data.Dataset.from_tensor_slices(images)
 
-    return test_data, decoder
+    images = images.batch(1).cache().prefetch(
+        buffer_size=AUTOTUNE)
+
+    return images, decoder
 
 
 if __name__ == '__main__':
