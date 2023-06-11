@@ -5,7 +5,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
-from keras.src.layers import StringLookup
+from keras.layers import StringLookup
 
 from model import Model
 from preprocessing.preprocessing import preprocess
