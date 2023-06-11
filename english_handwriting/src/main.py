@@ -50,9 +50,10 @@ def text_to_file(text, path):
             f.write(f"{line}\n")
 
 
-if __name__ == '__main__':
+def main():
+    MODEL_PATH = 'model_46--191.00'
     # reads input either from console or as a python script
-    parse()
+    # parse()
     if len(sys.argv) > 1:
         try:
             path = sys.argv[1]
@@ -60,8 +61,15 @@ if __name__ == '__main__':
             exit("Path couldn't be resolved.")
     else:
         path = input("Path to line image:")
+        if not os.path.exists(path):
+            print("Path couldn't be resolved.")
+            return
 
     images_names, test_images, decoder = preprocess_test_images(path)
     outputs = testing(test_images, decoder)
     text_to_file(outputs, path)
 
+
+
+if __name__ == '__main__':
+    main()

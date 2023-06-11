@@ -9,3 +9,4 @@ data/**
 **/.idea/
 **/.idea/*
 **/.idea/**
+/src/sub_dir/
