@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 import pandas as pd
-import Levenshtein
+# import Levenshtein
 
-from keras.src.layers import StringLookup
+from keras.layers import StringLookup
 from model import Model
 from preprocessing.preprocessing import preprocess
 from util.utils import set_working_dir
