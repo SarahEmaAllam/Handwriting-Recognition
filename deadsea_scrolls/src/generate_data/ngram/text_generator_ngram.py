@@ -23,7 +23,7 @@ def tokenize(text: str) -> List[str]:
 
 def get_ngrams(n: int, tokens: list) -> list:
     """
-    :param n: n-gram size
+    :param n: n-gram target_size
     :param tokens: tokenized sentence
     :return: list of ngrams
 

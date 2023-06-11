@@ -1,22 +1,23 @@
 # Handwriting-Recognition
 
-## How to run the model
+## Dead Sea Scrolls
 
 1. Install the required packages.
-Run the following command in the terminal, under the project directory:
+Run the following command in the terminal, under the `deadsea_scrolls` directory:
 ```
 pip install -r requirements.txt
 ```
 
 2. Add the dataset folder to the project directory (not included in the repository). 
 The dataset folder should contain the following files:
-- ```data/monkbrill``` - the training data (the letters);
-- ```data/image-data``` - the testing data. If the testing set directory has a 
+- ```deadsea_scrolls/data/monkbrill``` - the training data (the letters);
+- ```deadsea_scrolls/data/image-data``` - the testing data. If the testing set directory has a 
 different name, you can keep it, but make sure to update the ```SOURCE_SCROLLS```
 global variable in the ```globaL_params.py``` file.
 
-3. Preprocessing the data - only needs to be done once. You can run the 
-```preprocessing/main.py``` file:
+3. Preprocessing the data - only needs to be done once. If the preprocessed data 
+does not exist, the preprocessing will automatically be done . 
+You can run the```preprocessing/main.py``` file with the following command:
 ```
 python preprocess/preprocessing.py
 ```
@@ -29,3 +30,5 @@ to generate a sample image of the training data.
 ```
 python model.py
 ```
+
+## IAM-Dataset

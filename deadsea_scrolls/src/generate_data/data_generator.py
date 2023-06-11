@@ -7,7 +7,7 @@ font = None
 char_map = None
 
 
-# Load the font and set the font size to 42
+# Load the font and set the font target_size to 42
 def init_font():
 
     global font
@@ -53,7 +53,7 @@ def create_image(label, img_size):
     img = Image.new('L', img_size, 255)
     draw = ImageDraw.Draw(img)
 
-    # Get size of the font and draw the token in the center of the blank image
+    # Get target_size of the font and draw the token in the center of the blank image
     w, h = font.getsize(char_map[label])
     draw.text(((img_size[0] - w) / 2, (img_size[1] - h) / 2), char_map[label],
               0, font)

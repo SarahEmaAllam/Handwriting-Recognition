@@ -15,7 +15,7 @@ from util.global_params import *
 
 def stitch(images, text, folder, script_name):
     """
-    Create a new image for the script with fixed size. Start adding from right to left
+    Create a new image for the script with fixed target_size. Start adding from right to left
     the selected letters from the generated text. When PADDING is reached in width (x-axis), make
     a new line by updating the y-axis.
 
@@ -47,7 +47,7 @@ def stitch(images, text, folder, script_name):
             #  CHANGE Y OFFSET BASED ON (NEW_IMG.HEIGTH - IM.HEIGTH) / 2
             y_offset = y_offset
             # (x_offset, 0) = upper left corner of the canvas where to paste
-        # cropping = np.random.randint(5, 8, size=1)[0]
+        # cropping = np.random.randint(5, 8, target_size=1)[0]
         if y_offset + im.size[1] >= HEIGHT:
             break
         cropping = np.random.randint(5, 6, size=1)[0]

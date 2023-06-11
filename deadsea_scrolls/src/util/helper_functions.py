@@ -40,7 +40,7 @@ labels = {'Alef': 0,
 def resize_data(image: Image.Image, width: int, height: int) -> Tuple[
     Image.Image, Tuple[float, float]]:
     """
-    Normalizes images size to WIDTH and HEIGHT
+    Normalizes images target_size to WIDTH and HEIGHT
 
     Parameters
     ----------
@@ -157,8 +157,8 @@ def remove_directory(directory):
 #     ----------
 #     """
 #     desired_size = expected_size
-#     delta_width = desired_size[0] - img.size[0]
-#     delta_height = desired_size[1] - img.size[1]
+#     delta_width = desired_size[0] - img.target_size[0]
+#     delta_height = desired_size[1] - img.target_size[1]
 #     pad_width = delta_width // 2
 #     pad_height = delta_height // 2
 #     padding = (pad_width, pad_height, delta_width - pad_width, delta_height - pad_height)

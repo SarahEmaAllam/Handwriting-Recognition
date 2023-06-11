@@ -1,6 +1,10 @@
 import time
+
+import cv2
 import pandas as pd
 import numpy as np
+import imageio.v2 as imageio
+import imgaug.augmenters as iaa
 from sklearn.model_selection import train_test_split
 from util.global_params import *
 from tensorflow.keras.layers import StringLookup
@@ -70,12 +74,12 @@ def split_data(df: pd.DataFrame,
     return train_df, val_df, test_df
 
 
-def load_images(images_names: list[str]) -> list[tf.Tensor]:
+def load_images(images_names: list[str]) -> list[np.ndarray]:
     """
     Load and decode the images from the specified filepath
     :param images_names: list[str]
         List of images names
-    :return: list[tf.Tensor]
+    :return: list[np.ndarray]
         Images as a tf.Tensor list
     """
     images = []
@@ -83,40 +87,35 @@ def load_images(images_names: list[str]) -> list[tf.Tensor]:
     for image_file in images_names:
         # read the image from the filepath
         file_path = os.path.join(IMAGES_PATH, image_file)
-        image = tf.io.read_file(file_path)
-        image = tf.image.decode_image(image, channels=1)
-        image = tf.cast(image, tf.float32) / 255.0
-
-        # binarize the image
-        # image = tf.where(image > binarize_threshold, 1, 0)
+        image = imageio.imread(file_path)
+        image = image.astype(np.float32)
 
         images.append(image)
 
     return images
 
 
-def resize_images(images: list[tf.Tensor],
-                  size: tuple[int, int] = IMAGE_SIZE) -> list[tf.Tensor]:
+def resize_images(images: list[np.ndarray],
+                  target_size: tuple[int, int] = IMAGE_SIZE) -> list[tf.Tensor]:
     """
-    Resize the images to the specified shape
-    :param images: list[tf.Tensor]
+    Resize and pad the images to the specified shape
+    :param images: list[np.ndarray]
         List of images as a tf.Tensor
-    :param size: tuple[int, int]
+    :param target_size: tuple[int, int]
         Size to resize the images to
         If None, the image is resized to the original size
     :return: list[tf.Tensor]
         Resized images
     """
-    # if shape is not specified, use the maximum width and height of the images
-    if size is None:
-        size = np.max([list(img.shape) for img in images], axis=0)
-
-    (h, w) = (size[0], size[1])
+    (h, w) = (target_size[0], target_size[1])
 
     resized_images = []
 
     # resize the images
     for img in images:
+        # add the channel dimension
+        img = tf.expand_dims(img, axis=-1)
+
         resized_img = tf.image.resize_with_pad(
             img, target_height=h, target_width=w)
         resized_images.append(resized_img)
@@ -124,7 +123,7 @@ def resize_images(images: list[tf.Tensor],
     return resized_images
 
 
-def preprocess_images(images: list[str]) -> list[tf.Tensor]:
+def preprocess_images(images: list[str]) -> list[np.ndarray]:
     """
     Preprocess the images
     :param images: list[str]
@@ -139,6 +138,42 @@ def preprocess_images(images: list[str]) -> list[tf.Tensor]:
     images = resize_images(images)
 
     return images
+
+
+def augment_training_data(images: list[np.ndarray], labels: list[str]) -> tuple[list[np.ndarray], list[str]]:
+    """
+    Augment the training data
+    :param images: list[np.ndarray]
+        List of images
+    :param labels: list[str]
+        List of labels
+    :return: tuple[list[np.ndarray], list[str]]
+        Augmented images and labels
+    """
+    # augment the training data
+    # create a pandas dataframe from the images and labels
+    df = pd.DataFrame({'image': images,
+                       'label': labels})
+
+    augmented_images = []
+    augmented_labels = []
+
+    for image, label in zip(images, labels):
+        # augment the image
+        augmented_image = augment_img(image)
+        if isinstance(augmented_image, dict):
+            augmented_image = augmented_image['image']
+
+        if not np.array_equal(image, augmented_image):
+            augmented_images.append(augmented_image)
+            augmented_labels.append(label)
+
+    augmented_df = pd.DataFrame({'image': augmented_images,
+                                 'label': augmented_labels})
+
+    new_df = pd.concat([df, augmented_df], ignore_index=True)
+
+    return new_df['image'].values, new_df['label'].values
 
 
 def get_vocabulary_from_labels(labels: list[str]) -> tuple[list[str], int]:
@@ -231,7 +266,8 @@ def get_decoder(decoder_vocab: list[str]) -> StringLookup:
     return decoder
 
 
-def generator(images: list[tf.Tensor], labels: list[tf.Tensor]) -> dict[str, tf.Tensor]:
+def generator(images: list[np.ndarray], labels: list[tf.Tensor]) -> dict[
+    str, tf.Tensor]:
     """
     Generator for the tf.data.Dataset
     :param images: list[tf.Tensor]
@@ -337,8 +373,8 @@ def preprocess_data(print_progress: bool = False):
         print('Get vocabulary\t',
               time.time() - time_start)
 
-    # preprocess/encode the images
-    train_imgs = preprocess_images(train_df['image'].values)
+    # preprocess/load the images
+    train_imgs = load_images(train_df['image'].values)
     val_imgs = preprocess_images(val_df['image'].values)
     test_imgs = preprocess_images(test_df['image'].values)
     if print_progress:
@@ -348,8 +384,16 @@ def preprocess_data(print_progress: bool = False):
     # encode the labels
     encoder, decoder = get_encoding(vocab)
 
+    # augment the training data
+    train_imgs, train_labels = augment_training_data(
+        train_imgs, train_df['label'].values)
+    train_imgs = resize_images(train_imgs)
+    if print_progress:
+        print('Augment training data\t',
+              time.time() - time_start)
+
     encoded_train_labels = encode_labels(
-        train_df['label'].values, encoder, max_label_len)
+        train_labels, encoder, max_label_len)
     encoded_val_labels = encode_labels(
         val_df['label'].values, encoder, max_label_len)
     encoded_test_labels = encode_labels(
@@ -362,8 +406,8 @@ def preprocess_data(print_progress: bool = False):
         lambda: generator(train_imgs, encoded_train_labels),
         output_signature=(
             {
-                'image': tf.TensorSpec(shape=(None, None, 1), dtype=tf.float32),
-                'label': tf.TensorSpec(shape=(None,), dtype=tf.int64)
+                'image': tf.TensorSpec(shape=(IMAGE_SIZE[0], IMAGE_SIZE[1], 1), dtype=tf.float32),
+                'label': tf.TensorSpec(shape=(MAX_LEN,), dtype=tf.int64)
             }
         )
     )
@@ -440,38 +484,19 @@ def preprocess(print_progress=False):
         save_decoder_vocab(decoder.get_vocabulary(), vocab_path)
 
     if print_progress:
-        print('Creating batches and augmenting data')
+        print('Creating batches')
 
     train_batches = train_data.batch(BATCH_SIZE).cache().prefetch(
         buffer_size=AUTOTUNE)
-
-    # Calculate the length of the batch before augmentation
-    batch_length_before = tf.data.experimental.cardinality(
-        train_batches).numpy()
-    print("Batch Length Before Augmentation:", batch_length_before)
-
-    # augment the data
-    augmented_images_batches = train_batches.map(
-        lambda x: {'image': augment_img(x['image']), 'label': x['label']},
-        num_parallel_calls=AUTOTUNE)
-    train_batches = train_batches.concatenate(augmented_images_batches)
-    # Calculate the length of the batch after augmentation
-    batch_length_after = tf.data.experimental.cardinality(
-        train_batches).numpy() * BATCH_SIZE
-    print("Batch Length After Augmentation:", batch_length_after)
-
     val_batches = val_data.batch(BATCH_SIZE).cache().prefetch(
         buffer_size=AUTOTUNE)
     test_batches = test_data.batch(BATCH_SIZE).cache().prefetch(
         buffer_size=AUTOTUNE)
 
     return train_batches, val_batches, test_batches, decoder
-    # return train_data, val_data, test_data, decoder
 
 
 if __name__ == '__main__':
     # change working dir to root of project
     set_working_dir(os.path.abspath(__file__))
-    # tf.config.run_functions_eagerly(True)
-
     preprocess(print_progress=True)

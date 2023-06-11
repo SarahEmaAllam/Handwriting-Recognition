@@ -3,11 +3,9 @@ import datetime
 import tensorflow as tf
 from tensorflow import keras
 import numpy as np
-from util.global_params import MAX_LEN
+from util.global_params import MAX_LEN, BATCH_SIZE
 from preprocessing import preprocessing
 from model import Model
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from data_agumentation import augment_img
 
 
 def calculate_edit_distance(labels, predictions):
@@ -56,14 +54,16 @@ def train():
     print("[INFO] initializing model...")
     print("[INFO] compiling model...")
 
-    train_batches, val_batches, test_batches, decoder = preprocessing.preprocess(True)
+    train_batches, val_batches, test_batches, decoder = preprocessing.preprocess(
+        True)
     print("[INFO] training model...")
 
     output_shape = decoder.vocabulary_size() + 2
 
     model = Model().build_model(output_shape)
     prediction_model = keras.models.Model(
-        model.get_layer(name="image").input, model.get_layer(name="dense").output
+        model.get_layer(name="image").input,
+        model.get_layer(name="dense").output
     )
 
     # Validation data for the EditDistanceCallback.
@@ -77,16 +77,25 @@ def train():
     edit_distance_callback = EditDistanceCallback(
         prediction_model, validation_images, validation_labels)
 
+    # Tensorboard callback
+    # run in the terminal: tensorboard --logdir logs/fit
     log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir,
                                                           histogram_freq=1)
+
+    checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
+        filepath='trained/model_{epoch:02d}.h5',
+        save_freq='epoch'
+    )
 
     # train the model
     history = model.fit(
         train_batches,
         validation_data=val_batches,
         epochs=10,
-        callbacks=[edit_distance_callback, tensorboard_callback]
+        callbacks=[edit_distance_callback,
+                   tensorboard_callback,
+                   checkpoint_callback]
     )
 
     print(history)
