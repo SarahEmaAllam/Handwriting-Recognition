@@ -14,7 +14,9 @@ if __name__ == '__main__':
     try:
         arg_command = sys.argv[1]
     except IndexError:
-        arg_command = "all"
+        exit("This folder does not exist.\n"
+             "Use | generate | train | all | to train the model.\n"
+             "Or give a | path | relative path | to do a prediction on a set of images.")
 
     # if the input is a command for the model run it
     if arg_command in ["generate", "train", "all"]:

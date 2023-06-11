@@ -25,5 +25,8 @@ def set_working_dir(current_file_path):
     # change the working directory
     os.chdir(relative_prefix)
 
+    print(os.getcwd())
+    exit()
+
 
 

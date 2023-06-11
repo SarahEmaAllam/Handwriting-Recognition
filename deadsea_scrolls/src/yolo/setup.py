@@ -22,6 +22,7 @@ def prep_folder_structure():
             hf.remove_directory(os.path.join(DATA_FOLDER, dir, subdir))
 
     hf.remove_directory(os.path.join(RUN_FOLDER, 'detect', STORE_NAME))
+    hf.remove_directory("studies")
 
     hf.assert_dir(DATA_FOLDER)
     hf.assert_dir(DATA_FOLDER + "/images")

@@ -139,8 +139,7 @@ def run_model(mode):
 
     if mode == "all":
         # generate and split the data
-        if not resume_check():
-            setup.produce_data()
+        setup.produce_data()
 
         # train the model
         set_optuna_study()
