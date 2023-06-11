@@ -1,4 +1,5 @@
 import time
+from typing import Tuple, Any
 
 import cv2
 import pandas as pd
@@ -6,6 +7,8 @@ import numpy as np
 import imageio.v2 as imageio
 import imgaug.augmenters as iaa
 from sklearn.model_selection import train_test_split
+from tensorflow.python.data.ops.dataset_ops import DatasetV1, DatasetV2
+
 from util.global_params import *
 from tensorflow.keras.layers import StringLookup
 from util.utils import set_working_dir
@@ -496,6 +499,34 @@ def preprocess(print_progress=False):
         buffer_size=AUTOTUNE)
 
     return train_batches, val_batches, test_batches, decoder
+
+
+def preprocess_test_data(path: str) -> tuple[DatasetV1 | DatasetV2, StringLookup]:
+    """
+    Preprocess the test data
+    """
+    test_df = get_dataframe(path)
+    vocab_path = get_data_path('vocab.txt')
+
+    test_imgs = preprocess_images(test_df['image'].values)
+
+    # encode the labels
+    vocab = load_vocab(vocab_path)
+    encoder, decoder = get_encoding(vocab)
+    encoded_test_labels = encode_labels(
+        test_df['true_label'].values, encoder, MAX_LEN)
+
+    test_data = tf.data.Dataset.from_generator(
+        lambda: generator(test_imgs, encoded_test_labels),
+        output_signature=(
+            {
+                'image': tf.TensorSpec(shape=(None, None, 1), dtype=tf.float32),
+                'true_label': tf.TensorSpec(shape=(None,), dtype=tf.int64)
+            }
+        )
+    )
+
+    return test_data, decoder
 
 
 if __name__ == '__main__':

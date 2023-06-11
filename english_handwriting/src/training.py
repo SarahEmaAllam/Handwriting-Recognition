@@ -72,7 +72,7 @@ def train():
 
     for batch in val_batches:
         validation_images.append(batch['image'])
-        validation_labels.append(batch['true_label'])
+        validation_labels.append(batch['label'])
 
     edit_distance_callback = EditDistanceCallback(
         prediction_model, validation_images, validation_labels)
@@ -84,7 +84,7 @@ def train():
                                                           histogram_freq=1)
 
     checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
-        filepath='logs/trained_models/model_{epoch:02d}--{val_loss:.2f}',
+        filepath='logs/trained_models_adadelta/model_{epoch:02d}--{val_loss:.2f}',
         save_freq='epoch'
     )
 
