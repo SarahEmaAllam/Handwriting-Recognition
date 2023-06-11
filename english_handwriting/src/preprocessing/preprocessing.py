@@ -176,7 +176,7 @@ def augment_training_data(images: list[np.ndarray], labels: list[str]) -> tuple[
 
     new_df = pd.concat([df, augmented_df], ignore_index=True)
 
-    return new_df['image'].values, new_df['true_label'].values
+    return new_df['image'].values, new_df['label'].values
 
 
 def get_vocabulary_from_labels(labels: list[str]) -> tuple[list[str], int]:
@@ -373,7 +373,7 @@ def preprocess_data(print_progress: bool = False):
               time.time() - time_start)
 
     # get the vocabulary from the training labels
-    vocab, max_label_len = get_vocabulary_from_labels(train_df['true_label'].values)
+    vocab, max_label_len = get_vocabulary_from_labels(train_df['label'].values)
     if print_progress:
         print('Get vocabulary\t',
               time.time() - time_start)
@@ -391,7 +391,7 @@ def preprocess_data(print_progress: bool = False):
 
     # augment the training data
     train_imgs, train_labels = augment_training_data(
-        train_imgs, train_df['true_label'].values)
+        train_imgs, train_df['label'].values)
     train_imgs = resize_images(train_imgs)
     if print_progress:
         print('Augment training data\t',
@@ -400,9 +400,9 @@ def preprocess_data(print_progress: bool = False):
     encoded_train_labels = encode_labels(
         train_labels, encoder, max_label_len)
     encoded_val_labels = encode_labels(
-        val_df['true_label'].values, encoder, max_label_len)
+        val_df['label'].values, encoder, max_label_len)
     encoded_test_labels = encode_labels(
-        test_df['true_label'].values, encoder, max_label_len)
+        test_df['label'].values, encoder, max_label_len)
     if print_progress:
         print('Encode labels\t',
               time.time() - time_start, "seconds")
@@ -412,7 +412,7 @@ def preprocess_data(print_progress: bool = False):
         output_signature=(
             {
                 'image': tf.TensorSpec(shape=(IMAGE_SIZE[0], IMAGE_SIZE[1], 1), dtype=tf.float32),
-                'true_label': tf.TensorSpec(shape=(MAX_LEN,), dtype=tf.int64)
+                'label': tf.TensorSpec(shape=(MAX_LEN,), dtype=tf.int64)
             }
         )
     )
@@ -421,8 +421,8 @@ def preprocess_data(print_progress: bool = False):
         lambda: generator(val_imgs, encoded_val_labels),
         output_signature=(
             {
-                'image': tf.TensorSpec(shape=(None, None, 1), dtype=tf.float32),
-                'true_label': tf.TensorSpec(shape=(None,), dtype=tf.int64)
+                'image': tf.TensorSpec(shape=(IMAGE_SIZE[0], IMAGE_SIZE[1], 1), dtype=tf.float32),
+                'label': tf.TensorSpec(shape=(MAX_LEN,), dtype=tf.int64)
             }
         )
     )
@@ -431,8 +431,8 @@ def preprocess_data(print_progress: bool = False):
         lambda: generator(test_imgs, encoded_test_labels),
         output_signature=(
             {
-                'image': tf.TensorSpec(shape=(None, None, 1), dtype=tf.float32),
-                'true_label': tf.TensorSpec(shape=(None,), dtype=tf.int64)
+                'image': tf.TensorSpec(shape=(IMAGE_SIZE[0], IMAGE_SIZE[1], 1), dtype=tf.float32),
+                'label': tf.TensorSpec(shape=(MAX_LEN,), dtype=tf.int64)
             }
         )
     )
