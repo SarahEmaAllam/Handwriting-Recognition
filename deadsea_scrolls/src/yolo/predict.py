@@ -62,7 +62,7 @@ def predict(file_folder):
 
             # do the prediction
             file_path = os.path.join(file_folder, file)
-            boxes = model.predict(file_path, save=True)[0].boxes.boxes.cpu().detach().numpy()
+            boxes = model.predict(file_path)[0].boxes.boxes.cpu().detach().numpy()
 
             # Calculate maximum bounding box height
             max_height = np.max(boxes[::, 3] - boxes[::, 1]) / 2
