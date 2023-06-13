@@ -106,7 +106,7 @@ def sample_text_generator(text_len, ngram_size):
 
             if np.random.random_sample() < 0.5:
                 random_sample = create_image(letter, (64, 69)).convert('1')
-                random_sample = np.array(random_sample, dtype=np.uint8)
+                random_sample = np.array(random_sample)
             else:
                 # TODO: these are grayscale images (uint8 ndarray)
                 #  make them binary
