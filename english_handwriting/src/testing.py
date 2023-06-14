@@ -71,7 +71,7 @@ def evaluate():
     # os.chdir('../')
     # set_working_dir(os.path.abspath(__file__))
 
-    trained_model_path = 'resources/trained_models/model_61--232.73'
+    trained_model_path = 'resources/trained_models/best_model'
 
     # check if the path exists
     if not os.path.exists(trained_model_path):

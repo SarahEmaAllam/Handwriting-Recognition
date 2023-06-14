@@ -51,7 +51,6 @@ def text_to_file(text, path):
 
 
 def main():
-    MODEL_PATH = 'model_46--191.00'
     # reads input either from console or as a python script
     # parse()
     if len(sys.argv) > 1:
