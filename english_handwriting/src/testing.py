@@ -143,7 +143,7 @@ def testing(test_data: list[tf.Tensor], decoder: StringLookup) -> list[str]:
     :param test_data: the test data
     :return: the predicted labels
     """
-    trained_model_path = 'resources/trained_models/model_61--232.73'
+    trained_model_path = 'resources/trained_models/best_model'
 
     # load the trained model
     # Load the model
