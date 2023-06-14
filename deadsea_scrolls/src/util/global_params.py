@@ -34,7 +34,7 @@ RUN_FOLDER = 'runs'
 MODEL_FOLDER = 'resources'
 STUDIES_FOLDER = 'studies'
 STORE_NAME = DET_MODEL_NAME + '_handwriting'
-PREDICTION_MODEL = 'https://drive.google.com/uc?id=15cvGFiMLnVWNkE4c9LGZnaPYHfysCj4F&export=download'
+PREDICTION_MODEL = 'https://drive.google.com/u/1/uc?id=1inbsk-kryKtxVCxCeJveARuschSzSMK9&export=download'
 PREDICTION_DIR = "results"
 
 # paths for preprocessing
