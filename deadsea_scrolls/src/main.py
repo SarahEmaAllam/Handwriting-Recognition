@@ -19,8 +19,7 @@ if __name__ == '__main__':
              "Use | generate | train | all | to train the model.\n"
              "Or give a | path | relative path | to do a prediction on a set of images.")
 
-
-    # fix to force yolo to use the directories we want it to use
+    # fix to force yolo to use the directories we want it to0 use
     set_settings({'datasets_dir': os.path.join(os.getcwd(), DATA_FOLDER),
                   'runs_dir': os.path.join(os.getcwd(), RUN_FOLDER)})
 
