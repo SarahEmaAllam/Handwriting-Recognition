@@ -59,10 +59,6 @@ def results():
 
 def train_model(trial):
 
-    # fix to force yolo to use the directories we want it to use
-    set_settings({'datasets_dir': os.path.join(os.getcwd(), DATA_FOLDER),
-                  'runs_dir': os.path.join(os.getcwd(), RUN_FOLDER)})
-
     model_folder = MODEL_FOLDER
     det_model_name = DET_MODEL_NAME
     should_resume = resume_check()
