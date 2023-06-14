@@ -43,7 +43,6 @@ def predict(file_folder):
 
     # if the model is a link try to download it from google drive if a downloaded model doesn't exist yet
     prediction_model = PREDICTION_MODEL
-    print(validators.url(PREDICTION_MODEL))
     if validators.url(PREDICTION_MODEL):
         prediction_model = 'resources/yolo_downloaded.pt'
         if not os.path.exists('resources/yolo_downloaded.pt'):
