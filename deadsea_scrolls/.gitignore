@@ -21,3 +21,6 @@
 **/results/
 **/results/*
 **/results/**
+
+# ignore downloaded yolo model
+resources/yolo_downloaded.pt

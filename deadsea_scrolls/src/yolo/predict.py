@@ -41,10 +41,13 @@ def predict(file_folder):
 
     # set up the model
 
+    # if the model is a link try to download it from google drive if a downloaded model doesn't exist yet
     prediction_model = PREDICTION_MODEL
+    print(validators.url(PREDICTION_MODEL))
     if validators.url(PREDICTION_MODEL):
-        prediction_model = 'resources/yolo_downloaded'
-        gdown.download(PREDICTION_MODEL, prediction_model, quiet=False)
+        prediction_model = 'resources/yolo_downloaded.pt'
+        if not os.path.exists('resources/yolo_downloaded.pt'):
+            gdown.download(PREDICTION_MODEL, prediction_model, quiet=False)
     model = YOLO(prediction_model)
 
     # check if results directory exists
@@ -70,7 +73,7 @@ def predict(file_folder):
 
             # do the prediction
             file_path = os.path.join(file_folder, file)
-            boxes = model.predict(file_path, save=True)[0].boxes.boxes.cpu().detach().numpy()
+            boxes = model.predict(file_path)[0].boxes.boxes.cpu().detach().numpy()
 
             # Calculate maximum bounding box height
             max_height = np.max(boxes[::, 3] - boxes[::, 1]) / 2
