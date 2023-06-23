@@ -161,8 +161,6 @@ def preprocessing():
     scrolls_dir = os.path.join(PREPROCESS_DIR, "scrolls")
     hf.assert_dir(scrolls_dir)
 
-    
-
     print("Starting cropping and cleaning process.")
     maxWidth, maxHeight = crop_clean_symbols(SOURCE_SYMBOLS, symbols_dir)
     print("Finished cropping and cleaning process")
